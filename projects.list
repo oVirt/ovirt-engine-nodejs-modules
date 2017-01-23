@@ -1,0 +1,21 @@
+# This file contains URLs, each one referencing a "package.json"
+# file and the associated "yarn.lock" file (if one exists) for the
+# given project.
+#
+# Each URL should contain the "{FILE}" placeholder, for example:
+#
+#   https://example.com/your-project/{FILE}
+#
+# The build script substitutes the placeholder with specific file
+# name, for example:
+#
+#   https://example.com/your-project/package.json
+#   https://example.com/your-project/yarn.lock
+#
+# Blank lines and lines starting with "#" character are skipped.
+#
+# See the README file for more details.
+
+# oVirt Dashboard
+https://gerrit.ovirt.org/gitweb?p=ovirt-engine-dashboard.git;a=blob_plain;f={FILE};hb=HEAD
+https://gerrit.ovirt.org/gitweb?p=ovirt-engine-dashboard.git;a=blob_plain;f={FILE};hb=refs/heads/ovirt-engine-dashboard-1.1

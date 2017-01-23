@@ -1,65 +1,51 @@
 Name: ovirt-engine-nodejs-modules
-Version: 0.0.19
+Version: 1.0.0
 Release: 1%{?dist}
-Summary: Node.js modules required to build oVirt Engine JavaScript applications
+Summary: Node.js modules required to build oVirt JavaScript applications
 Group: Virtualization/Management
 License: Multiple
 URL: http://ovirt.org
 Source0: @TAR@
-Source1: LICENSES.csv
-Source2: CHANGES.adoc
-Source3: setup-env.sh
+Source1: LICENSES
+Source2: setup-env.sh
 
-ExclusiveArch: x86_64
-
-Requires: ovirt-engine-nodejs
-@REQUIRES@
+Requires: ovirt-engine-nodejs >= 6.9.4
+Requires: ovirt-engine-yarn >= 0.19.1
 
 %description
-Node.js modules required to build oVirt Engine JavaScript applications.
+Node.js modules required to build oVirt JavaScript applications.
 
 %prep
 
 # Copy additional files to build directory:
 cp %{SOURCE1} .
 cp %{SOURCE2} .
-cp %{SOURCE3} .
 
 %install
 
 # Create the destination directory in build root:
 mkdir -p %{buildroot}%{_datadir}/%{name}
 
-# Create the directory under where the modules will be installed in the
-# build root:
-mkdir -p %{buildroot}%{_sharedstatedir}/%{name}
-
-# Copy the modules tarball, but don't uncompress it, as that would
-# generate more files than RPM is capable to have in one single file.
-# The tarball will be uncompressed later, to the /var/lib directory.
-cp %{SOURCE0} %{buildroot}%{_datadir}/%{name}/node_modules.tar
+# Uncompress the offline cache tarball:
+tar -xf %{SOURCE0} -C %{buildroot}%{_datadir}/%{name}
 
 # Copy additional files to build root:
-cp %{SOURCE3} %{buildroot}%{_datadir}/%{name}/.
-
-%post
-
-# Uncompress the modules tarball directory:
-tar -xf %{_datadir}/%{name}/node_modules.tar -C %{_sharedstatedir}/%{name}
-
-%postun
-
-# Remove all files from the directory where the modules tarball was
-# uncompressed:
-rm -rf  %{_sharedstatedir}/%{name}/*
+cp %{SOURCE2} %{buildroot}%{_datadir}/%{name}/.
 
 %files
-%doc CHANGES.adoc
-%license LICENSES.csv
+%license LICENSES
 %{_datadir}/%{name}
-%{_sharedstatedir}/%{name}
 
 %changelog
+* Mon Jan 23 2017 Vojtech Szocs <vszocs@redhat.com> - 1.0.0-1
+- Use Yarn to download JavaScript dependencies based on projects.list
+  file. Use Yarn's "offline mirror" feature to download .tar.gz source
+  of each dependency into an offline cache directory, which is part of
+  the RPM package.
+- Generate the LICENSES file based on the content of the offline cache
+  directory via "yarn info {pkg_name}@{pkg_version} license" command.
+- Require ovirt-engine-{nodejs,yarn} when building the package.
+
 * Wed Dec 21 2016 Ramesh Nachimuthu <rnachimu@redhat.com> - 0.0.19-1
 - Add ini.
 

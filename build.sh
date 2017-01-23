@@ -1,70 +1,79 @@
 #!/bin/sh -ex
 
-# The name, version and source of the package:
+# Node.js is provided by the "ovirt-engine-nodejs" package:
+PATH="/usr/share/ovirt-engine-nodejs/bin:${PATH}"
+
+# Yarn is provided by the "ovirt-engine-yarn" package:
+PATH="/usr/share/ovirt-engine-yarn/bin:${PATH}"
+
+# When Yarn downloads dependencies, utilize the "offline mirror"
+# feature that puts .tar.gz sources of all dependencies into the
+# local "yarn-offline-cache" directory:
+yarn_offline_cache_dir="yarn-offline-cache"
+yarn config set yarn-offline-mirror "${PWD}/${yarn_offline_cache_dir}"
+
+# Clean up the offline cache directory:
+rm -rf ${yarn_offline_cache_dir}
+
+# The "projects.list" file contains URLs, each one referencing
+# a "package.json" file and the associated "yarn.lock" file (if
+# one exists) for the given project.
+# When reading the "projects.list" file, make sure to remove
+# blank lines as well as lines starting with the "#" character:
+sed -e '/^[ \t]*$/d' -e '/^#/d' projects.list | while read -r line; do
+
+    # Clean up intermediate files:
+    rm -rf package.json yarn.lock node_modules
+
+    # Resolve file URLs, substituting the "{FILE}" placeholder
+    # with specific file name:
+    package_json_url="${line/\{FILE\}/package.json}"
+    yarn_lock_url="${line/\{FILE\}/yarn.lock}"
+
+    # Download the "package.json" file (required):
+    wget -O "package.json" "${package_json_url}"
+
+    # Download the "yarn.lock" file (optional):
+    wget -O "yarn.lock" "${yarn_lock_url}" || true
+
+    # Download JavaScript dependencies using Yarn, this will
+    # populate the "node_modules" directory as well as update
+    # the offline cache directory:
+    yarn install
+
+done
+
+# For each source file located in the offline cache directory,
+# append its license information into the "LICENSES" file:
+for src_file in `find ${yarn_offline_cache_dir} -type f -name *.tgz | sort`; do
+
+    # Example: 'path-exists-3.0.0'
+    src_file_base=`basename ${src_file} | sed 's/\.tgz$//'`
+
+    # Example: 'path-exists'
+    js_pkg_name=`echo ${src_file_base} | grep -P -o '^[^0-9]+' | sed 's/-$//'`
+
+    # Example: '3.0.0'
+    js_pkg_version=`echo "${src_file_base/${js_pkg_name}/}" | sed 's/^-//'`
+
+    # Resolve the license name using Yarn:
+    js_pkg_license=`yarn info ${js_pkg_name}@${js_pkg_version} license | sed -n 2p`
+
+    # Append license information into the "LICENSES" file:
+    printf "${js_pkg_name}@${js_pkg_version}\n  License: ${js_pkg_license}\n" >> LICENSES
+
+done
+
+# Pack the offline cache directory into a tarball:
+yarn_offline_cache_tar="${yarn_offline_cache_dir}.tar"
+tar -cf "${yarn_offline_cache_tar}" "${yarn_offline_cache_dir}"
+
+# The name of the package:
 name="ovirt-engine-nodejs-modules"
-
-# Download the node binaries and extract them to a local directory:
-node_version="6.9.1"
-node_dir="node-v${node_version}-linux-x64"
-node_tar="${node_dir}.tar"
-node_url="https://nodejs.org/dist/v${node_version}/${node_tar}"
-if [ ! -f "${node_tar}" ]
-then
-    wget -O "${node_tar}" "${node_url}"
-fi
-rm -rf "${node_dir}"
-tar -xf "${node_tar}"
-
-# Configure the path environment variable so that the node binaries
-# installed in the previous step are always used before any other node
-# installation that may be available in the system:
-export PATH="${PWD}/${node_dir}/bin:${PATH}"
-
-# Clean the local modules directory and run "npm install" to download
-# all the dependencies listed in the "package.json" file:
-modules_dir="node_modules"
-rm -rf "${modules_dir}"
-npm cache clean
-npm install --no-optional
-
-# Configure the path environment variable so that we can use the
-# binaries provided by the modules installed in the previous step:
-export PATH="${PWD}/${modules_dir}/.bin:${PATH}"
-
-# Scan the downloaded modules and generate the LICENSES.csv file:
-license-checker --production --csv --out LICENSES.csv
-
-# Prune modules listed as devDependencies from modules directory:
-npm prune --production
-
-# Create a tar file out of the modules directory:
-modules_tar="${modules_dir}.tar"
-tar -cf "${modules_tar}" "${modules_dir}"
-
-# Find the dependencies required by binaries and libraries. Usually this
-# is done by RPM itself, but in our case we need to do it explicitly
-# because the binaries and libraries aren't part of the %files section
-# of the RPM, only the tarball containing them.
-requires=$(
-    find "${modules_dir}" -type f |
-    egrep -v '\.(css|html|js|json|md|txt|yml)$' |
-    /usr/lib/rpm/find-requires |
-    egrep -v '^$' |
-    sed 's|^|Requires: |'
-)
-
-# In order to use the calculated dependencies with the "s" command of
-# sed, we need to add a backslash before each new line, except for
-# the last one:
-requires=$(
-    echo "${requires}" |
-    sed -e '$!s|$|\\|'
-)
 
 # Generate the spec from the template:
 sed \
-    -e "s|@TAR@|${modules_tar}|g" \
-    -e "s|@REQUIRES@|${requires}|g" \
+    -e "s|@TAR@|${yarn_offline_cache_tar}|g" \
     < "${name}.spec.in" \
     > "${name}.spec"
 

@@ -1,0 +1,54 @@
+= ovirt-engine-nodejs-modules
+
+== Summary
+
+This package contains the dependencies needed to build oVirt JavaScript
+applications.
+
+== Usage
+
+Modify your build script and/or CI job configuration to ensure following
+packages are installed when building your project:
+
+* `ovirt-engine-nodejs`
+* `ovirt-engine-yarn`
+* `ovirt-engine-nodejs-modules`
+
+=== Spec file
+
+In your spec file, it's highly recommended to specify `Version-Release`
+when requiring the `ovirt-engine-nodejs-modules` package:
+
+ BuildRequires: ovirt-engine-nodejs-modules = 1.0.0-1
+
+=== Build script
+
+In your build script, source `setup-env.sh` to set up Node.js environment
+and populate the `./node_modules` directory:
+
+ cd /path/to/your/project
+ source /usr/share/ovirt-engine-nodejs-modules/setup-env.sh
+
+The setup script runs `yarn install --offline`, using JS package sources
+located at:
+
+ /usr/share/ovirt-engine-nodejs-modules/yarn-offline-cache
+
+If the above mentioned command fails, it means that you need to rebuild
+the `ovirt-engine-nodejs-modules` RPM to ensure that its offline cache
+directory contains all dependencies required by your project.
+
+== JavaScript dependency management
+
+Simply modify the `projects.list` file, adding URL(s) referencing your
+project's `package.json` file and the associated `yarn.lock` file (if
+one exists).
+
+== Package versioning
+
+When changing the `projects.list` file, always bump `.z` in `Version`
+and reset the `Release` number.
+
+When rebuilding the package without any changes, always bump `Release`
+number. That's because the `projects.list` file references remote files
+that can change over time.
