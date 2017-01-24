@@ -1,5 +1,5 @@
 Name: ovirt-engine-nodejs-modules
-Version: 1.0.0
+Version: 1.0.1
 Release: 1%{?dist}
 Summary: Node.js modules required to build oVirt JavaScript applications
 Group: Virtualization/Management
@@ -37,6 +37,9 @@ cp %{SOURCE2} %{buildroot}%{_datadir}/%{name}/.
 %{_datadir}/%{name}
 
 %changelog
+* Tue Jan 24 2017 Greg Sheremeta <gshereme@redhat.com> - 1.0.1-1
+- added ovirt-js-dependencies to projects.list
+
 * Mon Jan 23 2017 Vojtech Szocs <vszocs@redhat.com> - 1.0.0-1
 - Use Yarn to download JavaScript dependencies based on projects.list
   file. Use Yarn's "offline mirror" feature to download .tar.gz source

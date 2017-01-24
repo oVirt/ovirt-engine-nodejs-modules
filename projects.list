@@ -19,3 +19,6 @@
 # oVirt Dashboard
 https://gerrit.ovirt.org/gitweb?p=ovirt-engine-dashboard.git;a=blob_plain;f={FILE};hb=HEAD
 https://gerrit.ovirt.org/gitweb?p=ovirt-engine-dashboard.git;a=blob_plain;f={FILE};hb=refs/heads/ovirt-engine-dashboard-1.1
+
+# ovirt-js-dependencies
+https://gerrit.ovirt.org/gitweb?p=ovirt-js-dependencies.git;a=blob_plain;f={FILE};hb=HEAD
