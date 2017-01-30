@@ -6,6 +6,14 @@ PATH="/usr/share/ovirt-engine-nodejs/bin:${PATH}"
 # Yarn is provided by the "ovirt-engine-yarn" package:
 PATH="/usr/share/ovirt-engine-yarn/bin:${PATH}"
 
+# Make sure we remembered to update the version and/or release
+if ! git show -- *.spec | \
+    grep '^+\(Version:\|Release:\)'
+then
+    echo "Package version or release must be updated"
+    exit 1
+fi
+
 # When Yarn downloads dependencies, utilize the "offline mirror"
 # feature that puts .tar.gz sources of all dependencies into the
 # local "yarn-offline-cache" directory:
@@ -71,15 +79,10 @@ tar -cf "${yarn_offline_cache_tar}" "${yarn_offline_cache_dir}"
 # The name of the package:
 name="ovirt-engine-nodejs-modules"
 
-# Generate the spec from the template:
-sed \
-    -e "s|@TAR@|${yarn_offline_cache_tar}|g" \
-    < "${name}.spec.in" \
-    > "${name}.spec"
-
 # Build the source and binary packages:
 rpmbuild \
     -ba \
+    --define "_tar ${yarn_offline_cache_tar}" \
     --define="_sourcedir ${PWD}" \
     --define="_srcrpmdir ${PWD}" \
     --define="_rpmdir ${PWD}" \
