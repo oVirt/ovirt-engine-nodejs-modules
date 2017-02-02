@@ -1,5 +1,9 @@
 #!/bin/sh -ex
 
+# Make sure the artifacts directory is empty:
+artifacts_dir="${PWD}/exported-artifacts"
+rm -rf "${artifacts_dir}" && mkdir -p "${artifacts_dir}"
+
 # Node.js is provided by the "ovirt-engine-nodejs" package:
 PATH="/usr/share/ovirt-engine-nodejs/bin:${PATH}"
 
@@ -84,6 +88,6 @@ rpmbuild \
     -ba \
     --define "_tar ${yarn_offline_cache_tar}" \
     --define="_sourcedir ${PWD}" \
-    --define="_srcrpmdir ${PWD}" \
-    --define="_rpmdir ${PWD}" \
+    --define="_srcrpmdir ${artifacts_dir}" \
+    --define="_rpmdir ${artifacts_dir}" \
     "${name}.spec"
