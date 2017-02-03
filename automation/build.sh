@@ -48,6 +48,9 @@ sed -e '/^[ \t]*$/d' -e '/^#/d' projects.list | while read -r line; do
     # Download the "yarn.lock" file (optional):
     wget -O "yarn.lock" "${yarn_lock_url}" || true
 
+    # Transform offline entries to online ones. Yarn won't connect for offline entries
+    sed -i '/resolved "https:\/\//! s#\([ ]*\)resolved \(.*\)-\([0-9]\+\.[0-9]\+\.[0-9]\+.*\)#\1resolved "https://registry.yarnpkg.com/\2/-/\2-\3"#g' yarn.lock
+
     # Download JavaScript dependencies using Yarn, this will
     # populate the "node_modules" directory as well as update
     # the offline cache directory:
