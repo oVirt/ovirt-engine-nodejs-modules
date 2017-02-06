@@ -18,6 +18,15 @@ then
     exit 1
 fi
 
+# Create the "projects_files" directory to collect all project
+# specific files used when building this package:
+projects_files_dir="projects_files"
+rm -rf "${projects_files_dir}" && mkdir -p "${projects_files_dir}"
+
+# Clean the local cache used by Yarn (not to confuse with the
+# "offline mirror" feature configured below):
+yarn cache clean
+
 # When Yarn downloads dependencies, utilize the "offline mirror"
 # feature that puts .tar.gz sources of all dependencies into the
 # local "yarn-offline-cache" directory:
@@ -48,15 +57,21 @@ sed -e '/^[ \t]*$/d' -e '/^#/d' projects.list | while read -r line; do
     # Download the "yarn.lock" file:
     wget -O "yarn.lock" "${yarn_lock_url}"
 
-    # Transform offline entries to online ones. Yarn won't connect for offline entries
-    sed -i '/resolved "https:\/\//! s#\([ ]*\)resolved \(.*\)-\([0-9]\+\.[0-9]\+\.[0-9]\+.*\)#\1resolved "https://registry.yarnpkg.com/\2/-/\2-\3"#g' yarn.lock
+    # Copy downloaded files into the "projects_files" directory,
+    # use the "backup" argument to prevent over-writing the file
+    # if it exists:
+    cp --backup=t "package.json" "${projects_files_dir}/package.json"
+    cp --backup=t "yarn.lock" "${projects_files_dir}/yarn.lock"
 
     # Download JavaScript dependencies using Yarn, this will
     # populate the "node_modules" directory as well as update
     # the offline cache directory:
-    yarn install
+    yarn install --pure-lockfile
 
 done
+
+# Clean up intermediate files left behind:
+rm -rf package.json yarn.lock node_modules
 
 # For each source file located in the offline cache directory,
 # append its license information into the "LICENSES" file:
