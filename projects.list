@@ -1,6 +1,5 @@
 # This file contains URLs, each one referencing a "package.json"
-# file and the associated "yarn.lock" file (if one exists) for the
-# given project.
+# file and the associated "yarn.lock" file for the given project.
 #
 # Each URL should contain the "{FILE}" placeholder, for example:
 #

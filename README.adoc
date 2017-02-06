@@ -41,8 +41,7 @@ directory contains all dependencies required by your project.
 == JavaScript dependency management
 
 Simply modify the `projects.list` file, adding URL(s) referencing your
-project's `package.json` file and the associated `yarn.lock` file (if
-one exists).
+project's `package.json` file and the associated `yarn.lock` file.
 
 == Package versioning
 
