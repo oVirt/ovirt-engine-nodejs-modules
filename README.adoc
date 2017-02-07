@@ -11,15 +11,15 @@ Modify your build script and/or CI job configuration to ensure following
 packages are installed when building your project:
 
 * `ovirt-engine-nodejs`
-* `ovirt-engine-yarn`
 * `ovirt-engine-nodejs-modules`
+* `ovirt-engine-yarn`
 
-=== Spec file
+It's highly recommended to specify an explicit `Version-Release` when
+requiring the `ovirt-engine-nodejs-modules` package in your project.
 
-In your spec file, it's highly recommended to specify `Version-Release`
-when requiring the `ovirt-engine-nodejs-modules` package:
+For example, in your `automation/build-artifacts.packages` file:
 
- BuildRequires: ovirt-engine-nodejs-modules = 1.0.0-1
+  ovirt-engine-nodejs-modules-1.2.3
 
 === Build script
 
@@ -29,19 +29,22 @@ and populate the `./node_modules` directory:
  cd /path/to/your/project
  source /usr/share/ovirt-engine-nodejs-modules/setup-env.sh
 
-The setup script runs `yarn install --offline`, using JS package sources
-located at:
+The setup script runs `yarn install` in offline mode, using JavaScript
+package sources located at:
 
  /usr/share/ovirt-engine-nodejs-modules/yarn-offline-cache
 
 If the above mentioned command fails, it means that you need to rebuild
-the `ovirt-engine-nodejs-modules` RPM to ensure that its offline cache
-directory contains all dependencies required by your project.
+the `ovirt-engine-nodejs-modules` RPM so that its offline cache directory
+contains all dependencies currently required by your project.
 
 == JavaScript dependency management
 
 Simply modify the `projects.list` file, adding URL(s) referencing your
 project's `package.json` file and the associated `yarn.lock` file.
+
+Both `package.json` and `yarn.lock` are mandatory. The build will fail
+if any of those files are not available.
 
 == Package versioning
 

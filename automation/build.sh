@@ -23,10 +23,6 @@ fi
 projects_files_dir="projects_files"
 rm -rf "${projects_files_dir}" && mkdir -p "${projects_files_dir}"
 
-# Clean the local cache used by Yarn (not to confuse with the
-# "offline mirror" feature configured below):
-yarn cache clean
-
 # When Yarn downloads dependencies, utilize the "offline mirror"
 # feature that puts .tar.gz sources of all dependencies into the
 # local "yarn-offline-cache" directory:

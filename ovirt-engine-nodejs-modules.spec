@@ -1,5 +1,5 @@
 Name: ovirt-engine-nodejs-modules
-Version: 1.0.2
+Version: 1.0.3
 Release: 1%{?dist}
 Summary: Node.js modules required to build oVirt JavaScript applications
 Group: Virtualization/Management
@@ -9,8 +9,9 @@ Source0: %{?_tar}
 Source1: LICENSES
 Source2: setup-env.sh
 
-Requires: ovirt-engine-nodejs >= 6.9.4
-Requires: ovirt-engine-yarn >= 0.19.1
+# Following packages have their version specified in the .packages file:
+BuildRequires: ovirt-engine-nodejs
+BuildRequires: ovirt-engine-yarn
 
 %description
 Node.js modules required to build oVirt JavaScript applications.
@@ -37,6 +38,13 @@ cp %{SOURCE2} %{buildroot}%{_datadir}/%{name}/.
 %{_datadir}/%{name}
 
 %changelog
+* Tue Feb 7 2017 Vojtech Szocs <vszocs@redhat.com> - 1.0.3-1
+- "automation" directory cleanup.
+- "setup-env.sh" now modifies the "yarn.lock" file to make sure
+  it does not contain "resolved" entries containing HTTP links.
+  This is needed in order to use Yarn's "offline mirror" feature.
+- Node.js and Yarn versions are now specified in .packages file.
+
 * Mon Feb 6 2017 Vojtech Szocs <vszocs@redhat.com> - 1.0.2-1
 - Build script improvements.
 

@@ -1,1 +1,1 @@
-build.sh
+check.sh

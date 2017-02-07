@@ -15,6 +15,21 @@ export PATH="/usr/share/ovirt-engine-yarn/bin:${PATH}"
 # the "ovirt-engine-nodejs-modules" package:
 yarn config set yarn-offline-mirror "/usr/share/ovirt-engine-nodejs-modules/yarn-offline-cache"
 
+# Need to modify the "yarn.lock" file, since its "resolved"
+# entries usually look like
+#
+#   https://registry.yarnpkg.com/whatever/foo-1.2.3.tgz#checksum
+#
+# which makes Yarn think it has to download them (regardless
+# of the --offline option). Because of that, we modify those
+# entries to look like
+#
+#   foo-1.2.3.tgz#checksum
+#
+# to make Yarn happy and use the offline cache directory.
+# See https://github.com/yarnpkg/yarn/issues/394 for details.
+sed -i -e "s#resolved \"https.*/-/\(.*\)\"#resolved \\1#" yarn.lock
+
 # Populate the "./node_modules" directory using Yarn:
 yarn install --offline --pure-lockfile
 
