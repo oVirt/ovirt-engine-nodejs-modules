@@ -1,6 +1,6 @@
 Name: ovirt-engine-nodejs-modules
 Version: 1.0.3
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Node.js modules required to build oVirt JavaScript applications
 Group: Virtualization/Management
 License: Multiple
@@ -38,6 +38,11 @@ cp %{SOURCE2} %{buildroot}%{_datadir}/%{name}/.
 %{_datadir}/%{name}
 
 %changelog
+* Wed Feb 8 2017 Vojtech Szocs <vszocs@redhat.com> - 1.0.3-2
+- Improve LICENSES file generation, parsing license information
+  from Yarn's global cache instead of calling "yarn info" (which
+  makes HTTP request) per each dependency (we have lots of 'em).
+
 * Tue Feb 7 2017 Vojtech Szocs <vszocs@redhat.com> - 1.0.3-1
 - "automation" directory cleanup.
 - "setup-env.sh" now modifies the "yarn.lock" file to make sure

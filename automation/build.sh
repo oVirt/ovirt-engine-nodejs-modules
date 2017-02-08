@@ -30,7 +30,15 @@ yarn_offline_cache_dir="yarn-offline-cache"
 yarn config set yarn-offline-mirror "${PWD}/${yarn_offline_cache_dir}"
 
 # Clean up the offline cache directory:
-rm -rf ${yarn_offline_cache_dir}
+rm -rf "${yarn_offline_cache_dir}"
+
+# Customize the global cache directory used by Yarn (this is the
+# actual cache, not to confuse with the "offline mirror" feature):
+yarn_global_cache_dir="yarn-global-cache"
+yarn config set cache-folder "${PWD}/${yarn_global_cache_dir}"
+
+# Clean up the global cache directory:
+rm -rf "${yarn_global_cache_dir}"
 
 # The "projects.list" file contains URLs, each one referencing
 # a "package.json" file and the associated "yarn.lock" file for
@@ -40,7 +48,7 @@ rm -rf ${yarn_offline_cache_dir}
 sed -e '/^[ \t]*$/d' -e '/^#/d' projects.list | while read -r line; do
 
     # Clean up intermediate files:
-    rm -rf package.json yarn.lock node_modules
+    rm -rf "package.json" "yarn.lock" "node_modules"
 
     # Resolve file URLs, substituting the "{FILE}" placeholder
     # with specific file name:
@@ -67,26 +75,28 @@ sed -e '/^[ \t]*$/d' -e '/^#/d' projects.list | while read -r line; do
 done
 
 # Clean up intermediate files left behind:
-rm -rf package.json yarn.lock node_modules
+rm -rf "package.json" "yarn.lock" "node_modules"
+
+# Remove the "LICENSES" file before generating a new one:
+rm -rf "LICENSES"
 
 # For each source file located in the offline cache directory,
-# append its license information into the "LICENSES" file:
+# resolve its license and append it into the "LICENSES" file:
 for src_file in `find ${yarn_offline_cache_dir} -type f -name *.tgz | sort`; do
 
     # Example: 'path-exists-3.0.0'
     src_file_base=`basename ${src_file} | sed 's/\.tgz$//'`
 
-    # Example: 'path-exists'
-    js_pkg_name=`echo ${src_file_base} | grep -P -o '^[^0-9]+' | sed 's/-$//'`
+    # Find the corresponding "package.json" file within Yarn's
+    # global cache directory:
+    src_package_json=`readlink -f \
+        $(find ${yarn_global_cache_dir}/*${src_file_base}* -type f -name package.json | head -1)`
 
-    # Example: '3.0.0'
-    js_pkg_version=`echo "${src_file_base/${js_pkg_name}/}" | sed 's/^-//'`
-
-    # Resolve the license name using Yarn:
-    js_pkg_license=`yarn info ${js_pkg_name}@${js_pkg_version} license | sed -n 2p`
+    # Parse the license from the "package.json" file:
+    src_license=`jq -r '.license' ${src_package_json}`
 
     # Append license information into the "LICENSES" file:
-    printf "${js_pkg_name}@${js_pkg_version}\n  License: ${js_pkg_license}\n" >> LICENSES
+    printf "${src_file_base}\n  License: ${src_license}\n" >> LICENSES
 
 done
 
