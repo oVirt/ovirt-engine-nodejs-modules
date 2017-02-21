@@ -27,8 +27,15 @@ yarn config set yarn-offline-mirror "/usr/share/ovirt-engine-nodejs-modules/yarn
 #   foo-1.2.3.tgz#checksum
 #
 # to make Yarn happy and use the offline cache directory.
-# See https://github.com/yarnpkg/yarn/issues/394 for details.
-sed -i -e "s#resolved \"https.*/-/\(.*\)\"#resolved \\1#" yarn.lock
+#
+# If we don't remove the URLs, yarn complains:
+# 'error Can't make a request in offline mode'.
+# If you see 'error Can't make a request in offline mode',
+# check that this regular expression is working on every yarn.lock
+# entry.
+#
+# See https://github.com/yarnpkg/yarn/issues/394 for more details.
+sed -i -e "s#resolved \"\(http\|https\).*/-/\(.*\)\"#resolved \\2#" yarn.lock
 
 # Populate the "./node_modules" directory using Yarn:
 yarn install --offline --pure-lockfile
