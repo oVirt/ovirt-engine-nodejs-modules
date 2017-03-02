@@ -1,0 +1,2 @@
+ovirt-engine-nodejs_4.1,http://jenkins.ovirt.org/job/ovirt-engine-nodejs_4.1_build-artifacts-$distro-x86_64/lastSuccessfulBuild/artifact/exported-artifacts/
+ovirt-engine-yarn_4.1,http://jenkins.ovirt.org/job/ovirt-engine-yarn_4.1_build-artifacts-$distro-x86_64/lastSuccessfulBuild/artifact/exported-artifacts/

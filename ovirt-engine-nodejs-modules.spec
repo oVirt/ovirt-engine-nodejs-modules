@@ -1,6 +1,6 @@
 Name: ovirt-engine-nodejs-modules
 Version: 1.0.4
-Release: 6%{?dist}
+Release: 7%{?dist}
 Summary: Node.js modules required to build oVirt JavaScript applications
 Group: Virtualization/Management
 License: Multiple
@@ -36,6 +36,9 @@ cp %{SOURCE2} %{buildroot}%{_datadir}/%{name}/.
 %{_datadir}/%{name}
 
 %changelog
+* Thu Mar 2 2017 Greg Sheremeta <gshereme@redhat.com> - 1.0.4-7
+- add fc24 repos.
+
 * Tue Feb 21 2017 Greg Sheremeta <gshereme@redhat.com> - 1.0.4-6
 - switch to noarch. Remove BuildRequires.
 
