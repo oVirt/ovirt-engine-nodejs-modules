@@ -1,6 +1,6 @@
 Name: ovirt-engine-nodejs-modules
 Version: 1.0.10
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Node.js modules required to build oVirt JavaScript applications
 Group: Virtualization/Management
 License: Multiple
@@ -36,6 +36,15 @@ cp %{SOURCE2} %{buildroot}%{_datadir}/%{name}/.
 %{_datadir}/%{name}
 
 %changelog
+* Fri May 12 2017 Vojtech Szocs <vszocs@redhat.com> - 1.0.10-2
+- Expose bundled JavaScript dependency listing as:
+    exported-artifacts/bundled_dependencies.list
+- Expose the "projects_files" directory (containing all project
+  specific files downloaded during the RPM build) as:
+    exported-artifacts/projects_files.tar
+- In the setup script, run `yarn check` after `yarn install` to
+  ensure consistency between package.json vs. yarn.lock files.
+
 * Fri May 12 2017 Marek Libra - 1.0.10-1
 - ovirt-ui-components 0.2.2 released as referenced from ovirt-web-ui
 

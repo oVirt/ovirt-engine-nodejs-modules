@@ -99,6 +99,14 @@ done
 yarn_offline_cache_tar="${yarn_offline_cache_dir}.tar"
 tar -cf "${yarn_offline_cache_tar}" "${yarn_offline_cache_dir}"
 
+# Expose the offline cache directory listing in the artifacts
+# directory (used to verify bundled JavaScript dependencies):
+ls -1 "${yarn_offline_cache_dir}" > "${artifacts_dir}/bundled_dependencies.list"
+
+# Expose the "projects_files" directory content as a tarball
+# in the artifacts directory:
+tar -cf "${artifacts_dir}/projects_files.tar" "${projects_files_dir}"
+
 # The name of the package:
 name="ovirt-engine-nodejs-modules"
 
