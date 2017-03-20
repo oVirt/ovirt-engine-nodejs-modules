@@ -48,9 +48,11 @@ if any of those files are not available.
 
 == Package versioning
 
-When changing the `projects.list` file, always bump `.z` in `Version`
+When changing the `projects.list` file, bump `.y` in `Version` and reset
+the `Release` number.
+
+When rebuilding the package to reflect changes in the consuming projects
+(the ones listed in the `projects.list` file), bump `.z` in `Version`
 and reset the `Release` number.
 
-When rebuilding the package without any changes, always bump `Release`
-number. That's because the `projects.list` file references remote files
-that can change over time.
+As for packaging related changes, simply bump the `Release` number.
