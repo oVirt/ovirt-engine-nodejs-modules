@@ -1,5 +1,8 @@
 #!/bin/sh -ex
 
+# Make sure we remember to update the version and/or release:
+./automation/check-version-release.sh
+
 # The following loop is taken from "build.sh" - the goal is to validate
 # that all project specific files specified in the "projects.list" file
 # are available for the subsequent RPM build:

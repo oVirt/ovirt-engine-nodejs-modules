@@ -10,13 +10,8 @@ PATH="/usr/share/ovirt-engine-nodejs/bin:${PATH}"
 # Yarn is provided by the "ovirt-engine-yarn" package:
 PATH="/usr/share/ovirt-engine-yarn/bin:${PATH}"
 
-# Make sure we remembered to update the version and/or release
-if ! git show -- *.spec | \
-    grep '^+\(Version:\|Release:\)'
-then
-    echo "Package version or release must be updated"
-    exit 1
-fi
+# Make sure we remember to update the version and/or release:
+./automation/check-version-release.sh
 
 # Create the "projects_files" directory to collect all project
 # specific files used when building this package:
