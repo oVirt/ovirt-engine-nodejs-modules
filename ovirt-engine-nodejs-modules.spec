@@ -1,6 +1,6 @@
 Name: ovirt-engine-nodejs-modules
 Version: 1.0.10
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Node.js modules required to build oVirt JavaScript applications
 Group: Virtualization/Management
 License: Multiple
@@ -36,6 +36,9 @@ cp %{SOURCE2} %{buildroot}%{_datadir}/%{name}/.
 %{_datadir}/%{name}
 
 %changelog
+* Mon May 15 2017 Greg Sheremeta <gshereme@redhat.com> - 1.0.10-3
+- force CI to use latest builds
+
 * Fri May 12 2017 Vojtech Szocs <vszocs@redhat.com> - 1.0.10-2
 - Expose bundled JavaScript dependency listing as:
     exported-artifacts/bundled_dependencies.list

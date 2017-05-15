@@ -13,6 +13,13 @@ PATH="/usr/share/ovirt-engine-yarn/bin:${PATH}"
 # Make sure we remember to update the version and/or release:
 ./automation/check-version-release.sh
 
+# The "build.packages.force" file contains BuildRequires packages
+# to be installed using their latest version.
+# Force CI to get the latest version of these packages:
+dependencies="$(sed -e '/^[ \t]*$/d' -e '/^#/d' automation/build.packages.force)"
+yum-deprecated clean metadata || yum clean metadata
+yum-deprecated -y install ${dependencies} || yum -y install ${dependencies}
+
 # Create the "projects_files" directory to collect all project
 # specific files used when building this package:
 projects_files_dir="projects_files"
