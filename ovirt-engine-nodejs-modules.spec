@@ -1,6 +1,6 @@
 Name: ovirt-engine-nodejs-modules
-Version: 1.0.10
-Release: 4%{?dist}
+Version: 1.0.11
+Release: 1%{?dist}
 Summary: Node.js modules required to build oVirt JavaScript applications
 Group: Virtualization/Management
 License: Multiple
@@ -36,6 +36,9 @@ cp %{SOURCE2} %{buildroot}%{_datadir}/%{name}/.
 %{_datadir}/%{name}
 
 %changelog
+* Mon May 15 2017 Marek Libra - 1.0.11-1
+- dependencies in ovirt-web-ui updated to latest versions (i.e. React)
+
 * Mon May 15 2017 Greg Sheremeta <gshereme@redhat.com> - 1.0.10-4
 - remove temporary lockfile editing from setup-env.sh
 - add 'v1' to yarn cache patch when building licenses file
