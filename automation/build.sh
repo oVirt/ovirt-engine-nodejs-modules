@@ -38,6 +38,7 @@ rm -rf "${yarn_offline_cache_dir}"
 # actual cache, not to confuse with the "offline mirror" feature):
 yarn_global_cache_dir="yarn-global-cache"
 yarn config set cache-folder "${PWD}/${yarn_global_cache_dir}"
+yarn_global_cache_path="$(yarn cache dir)"
 
 # Clean up the global cache directory:
 rm -rf "${yarn_global_cache_dir}"
@@ -92,7 +93,7 @@ for src_file in `find ${yarn_offline_cache_dir} -type f -name *.tgz | sort`; do
     # Find the corresponding "package.json" file within Yarn's
     # global cache directory:
     src_package_json=`readlink -f \
-        $(find ${yarn_global_cache_dir}/v1/*${src_file_base}* -type f -name package.json | head -1)`
+        $(find ${yarn_global_cache_path}/*${src_file_base}* -type f -name package.json | head -1)`
 
     # Parse the license from the "package.json" file:
     src_license=`jq -r '.license' ${src_package_json}`
