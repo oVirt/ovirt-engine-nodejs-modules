@@ -28,7 +28,8 @@ https://gerrit.ovirt.org/gitweb?p=ovirt-js-dependencies.git;a=blob_plain;f={FILE
 # cockpit-ovirt
 https://gerrit.ovirt.org/gitweb?p=cockpit-ovirt.git;a=blob_plain;f=dashboard/{FILE};hb=HEAD
 https://gerrit.ovirt.org/gitweb?p=cockpit-ovirt.git;a=blob_plain;f=vdsm/{FILE};hb=HEAD
+https://gerrit.ovirt.org/gitweb?p=cockpit-ovirt.git;a=blob_plain;f=dashboard/{FILE};hb=ovirt-4.1
+https://gerrit.ovirt.org/gitweb?p=cockpit-ovirt.git;a=blob_plain;f=vdsm/{FILE};hb=ovirt-4.1
 
 # cockpit-machines-ovirt-provider
 https://raw.githubusercontent.com/oVirt/cockpit-machines-ovirt-provider/master/{FILE}
-

@@ -1,5 +1,5 @@
 Name: ovirt-engine-nodejs-modules
-Version: 1.0.14
+Version: 1.0.15
 Release: 1%{?dist}
 Summary: Node.js modules required to build oVirt JavaScript applications
 Group: Virtualization/Management
@@ -36,6 +36,9 @@ cp %{SOURCE2} %{buildroot}%{_datadir}/%{name}/.
 %{_datadir}/%{name}
 
 %changelog
+* Mon Jun 5 2017 Greg Sheremeta <gshereme@redhat.com> - 1.0.15-1
+- add cockpit-ovirt 4.1 branch to projects.list
+
 * Sat Jun 3 2017 Greg Sheremeta <gshereme@redhat.com> - 1.0.14-1
 - bump version for new ovirt-js-dependencies
 
