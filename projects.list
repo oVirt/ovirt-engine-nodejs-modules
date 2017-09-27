@@ -32,3 +32,6 @@ https://gerrit.ovirt.org/gitweb?p=cockpit-ovirt.git;a=blob_plain;f=vdsm/{FILE};h
 
 # cockpit-machines-ovirt-provider
 https://raw.githubusercontent.com/oVirt/cockpit-machines-ovirt-provider/master/{FILE}
+
+# ovirt-engine-api-explorer
+https://gerrit.ovirt.org/gitweb?p=ovirt-engine-api-explorer.git;a=blob_plain;f={FILE};hb=HEAD
