@@ -77,6 +77,26 @@ sed -e '/^[ \t]*$/d' -e '/^#/d' projects.list | while read -r line; do
 
 done
 
+# The "pre-seed" directory contains subdirectories each containing
+# a "package.json" file and the associated "yarn.lock" file for
+# the given pre-seed.
+find pre-seed -mindepth 1 -maxdepth 1 -type d | while read -r dname; do
+
+    # Clean up intermediate files:
+    rm -rf "package.json" "yarn.lock" "node_modules"
+
+    echo "$dname"
+    ls -la "$dname"
+    cp "$dname/package.json" .
+    cp "$dname/yarn.lock" .
+
+    # Download JavaScript dependencies using Yarn, this will
+    # populate the "node_modules" directory as well as update
+    # the offline cache directory:
+    yarn install --pure-lockfile
+
+done
+
 # Clean up intermediate files left behind:
 rm -rf "package.json" "yarn.lock" "node_modules"
 

@@ -56,3 +56,26 @@ When rebuilding the package to reflect changes in the consuming projects
 and reset the `Release` number.
 
 As for packaging related changes, simply bump the `Release` number.
+
+== Pre-seed
+
+If you need dependencies to exist in ovirt-engine-nodejs-modules, but
+your package.json and yarn.lock files are not yet committed, you can
+pre-seed ovirt-engine-nodejs-modules with your files to avoid a
+chicken and egg problem.
+
+Add a subdirectory in the pre-seed directory, and in that subdirectory
+add copies of the package.json and yarn.lock your new project or patch
+is using.
+
+For example:
+ - pre-seed/2018-01-14-ovirt-engine-dashboard/package.json
+ - pre-seed/2018-01-14-ovirt-engine-dashboard/yarn.lock
+ - pre-seed/2018-01-15-example-project/package.json
+ - pre-seed/2018-01-15-example-project/yarn.lock
+
+(The pre-seed directory can occasionally be pruned.)
+
+After committing a patch that adds a pre-seed, the newly built version
+of ovirt-engine-nodejs-modules will now be pre-seeded with your
+new package.json + yarn.lock requirements.
