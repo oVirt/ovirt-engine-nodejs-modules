@@ -1,5 +1,5 @@
 Name: ovirt-engine-nodejs-modules
-Version: 1.5.5
+Version: 1.5.6
 Release: 1%{?dist}
 Summary: Node.js modules required to build oVirt JavaScript applications
 Group: Virtualization/Management
@@ -36,6 +36,9 @@ cp %{SOURCE2} %{buildroot}%{_datadir}/%{name}/.
 %{_datadir}/%{name}
 
 %changelog
+* Thu May 3 2018 Vojtech Szocs <vszocs@redhat.com> - 1.5.6-1
+- pre-seed ovirt-engine-dashboard dependencies
+
 * Fri Apr 20 2018 Vojtech Szocs <vszocs@redhat.com> - 1.5.5-1
 - pre-seed ovirt-engine-dashboard dependencies
 
