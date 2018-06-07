@@ -1,5 +1,14 @@
 #!/bin/sh -ex
 
+DISTVER="$(rpm --eval "%dist"|cut -c2-3)"
+PACKAGER=""
+if [[ "${DISTVER}" == "el" ]]; then
+    PACKAGER=yum
+else
+    PACKAGER=dnf
+fi
+
+
 # Make sure the artifacts directory is empty:
 artifacts_dir="${PWD}/exported-artifacts"
 rm -rf "${artifacts_dir}" && mkdir -p "${artifacts_dir}"
@@ -17,8 +26,8 @@ PATH="/usr/share/ovirt-engine-yarn/bin:${PATH}"
 # to be installed using their latest version.
 # Force CI to get the latest version of these packages:
 dependencies="$(sed -e '/^[ \t]*$/d' -e '/^#/d' automation/build.packages.force)"
-yum-deprecated clean metadata || yum clean metadata
-yum-deprecated -y install ${dependencies} || yum -y install ${dependencies}
+${PACKAGER} clean metadata
+${PACKAGER} -y install ${dependencies}
 
 # Create the "projects_files" directory to collect all project
 # specific files used when building this package:
