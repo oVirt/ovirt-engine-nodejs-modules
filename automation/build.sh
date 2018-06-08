@@ -122,13 +122,15 @@ for src_file in `find ${yarn_offline_cache_dir} -type f -name *.tgz | sort`; do
     # Find the corresponding "package.json" file within Yarn's
     # global cache directory:
     src_package_json=`readlink -f \
-        $(find ${yarn_global_cache_path}/*${src_file_base}* -type f -name package.json | head -1)`
+        $(find ${yarn_global_cache_path}/*${src_file_base}* -type f -name package.json | head -1)` || /bin/true
 
-    # Parse the license from the "package.json" file:
-    src_license=`jq -r '.license' ${src_package_json}`
+    if [ -n "$src_package_json" ]; then
+        # Parse the license from the "package.json" file:
+        src_license=`jq -r '.license' ${src_package_json}`
 
-    # Append license information into the "LICENSES" file:
-    printf "${src_file_base}\n  License: ${src_license}\n" >> LICENSES
+        # Append license information into the "LICENSES" file:
+        printf "${src_file_base}\n  License: ${src_license}\n" >> LICENSES
+    fi
 
 done
 
