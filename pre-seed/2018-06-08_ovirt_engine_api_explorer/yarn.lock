@@ -1670,7 +1670,7 @@ datatables.net-select@~1.2.0:
     datatables.net "^1.10.15"
     jquery ">=1.7"
 
-datatables.net@1.10.16, datatables.net@^1.10.15:
+datatables.net@1.10.16, datatables.net@^1.10.15, datatables.net@^1.10.16:
   version "1.10.16"
   resolved "https://registry.yarnpkg.com/datatables.net/-/datatables.net-1.10.16.tgz#4b052d1082824261b68eed9d22741b711d3d2469"
   dependencies:
@@ -2654,8 +2654,8 @@ hmac-drbg@^1.0.0:
     minimalistic-crypto-utils "^1.0.1"
 
 hoist-non-react-statics@^2.5.0:
-  version "2.5.0"
-  resolved "https://registry.yarnpkg.com/hoist-non-react-statics/-/hoist-non-react-statics-2.5.0.tgz#d2ca2dfc19c5a91c5a6615ce8e564ef0347e2a40"
+  version "2.5.3"
+  resolved "https://registry.yarnpkg.com/hoist-non-react-statics/-/hoist-non-react-statics-2.5.3.tgz#db97beaf5e03d407ae03c74c1a7451524c051f4e"
 
 home-or-tmp@^2.0.0:
   version "2.0.0"
@@ -3083,13 +3083,9 @@ jquery-match-height@^0.7.2:
   version "0.7.2"
   resolved "https://registry.yarnpkg.com/jquery-match-height/-/jquery-match-height-0.7.2.tgz#f8d9f3ba5314daab109cf07408674be204be5f0e"
 
-"jquery@>= 2.1.x", jquery@>=1.7, jquery@>=1.7.0, "jquery@>=1.7.1 <4.0.0", jquery@>=1.8, "jquery@^1.8.3 || ^2.0 || ^3.0", jquery@^3.2.1:
+jquery@3.3.1, "jquery@>= 2.1.x", jquery@>=1.7, jquery@>=1.7.0, "jquery@>=1.7.1 <4.0.0", jquery@>=1.8, "jquery@^1.8.3 || ^2.0 || ^3.0", jquery@^3.3.1, jquery@~3.2.1:
   version "3.3.1"
   resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.3.1.tgz#958ce29e81c9790f31be7792df5d4d95fc57fbca"
-
-jquery@~3.2.1:
-  version "3.2.1"
-  resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.2.1.tgz#5c4d9de652af6cd0a770154a631bba12b015c787"
 
 js-base64@^2.1.9:
   version "2.4.5"
@@ -3890,7 +3886,7 @@ patternfly-bootstrap-treeview@~2.1.0:
     bootstrap "3.3.x"
     jquery ">= 2.1.x"
 
-patternfly@^3.27.5:
+patternfly@^3.48.4:
   version "3.48.4"
   resolved "https://registry.yarnpkg.com/patternfly/-/patternfly-3.48.4.tgz#0c4f8d8ac5bfc49b32464a4f5420c3e6a6e079d4"
   dependencies:
