@@ -1,6 +1,6 @@
 Name: ovirt-engine-nodejs-modules
-Version: 1.5.6
-Release: 3%{?dist}
+Version: 1.5.7
+Release: 1%{?dist}
 Summary: Node.js modules required to build oVirt JavaScript applications
 Group: Virtualization/Management
 License: Multiple
@@ -36,6 +36,9 @@ cp %{SOURCE2} %{buildroot}%{_datadir}/%{name}/.
 %{_datadir}/%{name}
 
 %changelog
+* Fri Jun 8 2018 Greg Sheremeta <gshereme@redhat.com> - 1.5.7-1
+- pre-seed ovirt-engine-dashboard dependencies
+
 * Thu Jun  7 2018 Greg Sheremeta <gshereme@redhat.com> - 1.5.6-3
 - fix case where package.json can't be found on license parse
 
