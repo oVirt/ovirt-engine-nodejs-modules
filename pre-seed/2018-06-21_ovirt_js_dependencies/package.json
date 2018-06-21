@@ -1,6 +1,6 @@
 {
   "name": "ovirt-js-dependencies",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "JavaScript runtime dependencies for oVirt applications",
   "license": "Apache-2.0",
   "repository": {
@@ -16,7 +16,7 @@
     "insertion-query": "^1.0.4",
     "jquery": "3.2.1",
     "jquery-ui-dist": "^1.12.1",
-    "patternfly": "3.48.4",
-    "rcue": "3.48.1"
+    "patternfly": "=3.25.1",
+    "rcue": "=3.25.1"
   }
 }

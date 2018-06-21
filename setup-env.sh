@@ -21,7 +21,11 @@ yarn install --offline --pure-lockfile
 # Verify that dependency versions (semantic version ranges)
 # in the "package.json" file have matching resolutions in
 # the "yarn.lock" file:
-yarn check
+if [ -n IGNORE_YARN_CHECK ]; then
+    yarn check || /bin/true
+else
+    yarn check
+fi
 
 # JavaScript modules put their executables (if any) into
 # the "./node_modules/.bin" directory, make sure it's on

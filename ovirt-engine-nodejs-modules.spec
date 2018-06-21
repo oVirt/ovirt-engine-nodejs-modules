@@ -1,5 +1,5 @@
 Name: ovirt-engine-nodejs-modules
-Version: 1.5.10
+Version: 1.6.0
 Release: 1%{?dist}
 Summary: Node.js modules required to build oVirt JavaScript applications
 Group: Virtualization/Management
@@ -36,6 +36,10 @@ cp %{SOURCE2} %{buildroot}%{_datadir}/%{name}/.
 %{_datadir}/%{name}
 
 %changelog
+* Thu Jun 21 2018 Greg Sheremeta <gshereme@redhat.com> - 1.6.0-1
+- add switch to disable 'yarn check'
+- pre-seed ovirt-js-dependencies
+
 * Wed Jun 13 2018 Greg Sheremeta <gshereme@redhat.com> - 1.5.10-1
 - pre-seed ovirt-engine-api-explorer
 
