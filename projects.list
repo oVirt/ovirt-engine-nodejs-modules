@@ -20,6 +20,9 @@ https://gerrit.ovirt.org/gitweb?p=ovirt-engine-dashboard.git;a=blob_plain;f={FIL
 https://gerrit.ovirt.org/gitweb?p=ovirt-engine-dashboard.git;a=blob_plain;f={FILE};hb=refs/heads/ovirt-engine-dashboard-1.2
 https://gerrit.ovirt.org/gitweb?p=ovirt-engine-dashboard.git;a=blob_plain;f={FILE};hb=refs/heads/ovirt-engine-dashboard-1.1
 
+# oVirt UI Extensions
+https://gerrit.ovirt.org/gitweb?p=ovirt-engine-ui-extensions.git;a=blob_plain;f={FILE};hb=HEAD
+
 # ovirt-web-ui
 https://raw.githubusercontent.com/oVirt/ovirt-web-ui/master/{FILE}
 
