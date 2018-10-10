@@ -25,6 +25,7 @@ https://gerrit.ovirt.org/gitweb?p=ovirt-engine-ui-extensions.git;a=blob_plain;f=
 
 # ovirt-web-ui
 https://raw.githubusercontent.com/oVirt/ovirt-web-ui/master/{FILE}
+https://raw.githubusercontent.com/oVirt/ovirt-web-ui/ovirt-web-ui-1.4/{FILE}
 
 # ovirt-js-dependencies
 https://gerrit.ovirt.org/gitweb?p=ovirt-js-dependencies.git;a=blob_plain;f={FILE};hb=HEAD
