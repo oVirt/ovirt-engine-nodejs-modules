@@ -10,8 +10,8 @@
   "zanataLocales": "de,es,fr,it,ja,ko,pt-BR,zh-CN,cs",
   "scripts": {
     "prebuild": "yarn test",
-    "build": "NODE_ENV=production webpack -p --bail",
-    "dev": "webpack -d --progress",
+    "build": "NODE_ENV=production webpack",
+    "dev": "NODE_ENV=development webpack -d --progress",
     "dev:watch": "yarn dev --watch",
     "intl:extract": "node zanata/extract-translations.js && rip json2pot 'extra/messages/**/*.json' -o 'extra/messages/messages.pot'",
     "intl:push-all": "cd zanata && zanata-cli push --push-type source --locales $npm_package_zanataLocales",
@@ -78,8 +78,9 @@
     "react-intl-po": "^1.2.0",
     "sinon": "^7.4.1",
     "style-loader": "^0.19.1",
+    "terser-webpack-plugin-legacy": "^1.2.3",
     "url-loader": "^0.6.2",
-    "webpack": "^3.10.0",
+    "webpack": "^3.12.0",
     "webpack-dev-server": "^2.11.0"
   },
 
@@ -95,7 +96,6 @@
     "moduleNameMapper": {
       "^react(.*)$": "<rootDir>/node_modules/react",
       "^_/(.*)$": "<rootDir>/src/$1",
-
       "^.+\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/jest/fileMock.js",
       "^.+\\.(css|less)$": "identity-obj-proxy"
     },
