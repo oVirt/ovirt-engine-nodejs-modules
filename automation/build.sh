@@ -52,6 +52,15 @@ yarn_global_cache_path="$(yarn cache dir)"
 # Clean up the global cache directory:
 rm -rf "${yarn_global_cache_dir}"
 
+
+# Populate offline cache for the last build of this project:
+nodejs_modules_cache="/usr/share/ovirt-engine-nodejs-modules/yarn-offline-cache"
+if [[ -d "${nodejs_modules_cache}" ]]; then
+  find "${nodejs_modules_cache}" -name "*.tgz" -exec mv {} "${yarn_offline_cache_dir}" \;
+  echo "Prefilled the offline cache from $(rpm -q ovirt-engine-nodejs-modules)"
+fi
+
+
 # The "projects.list" file contains URLs, each one referencing
 # a "package.json" file and the associated "yarn.lock" file for
 # the given project.

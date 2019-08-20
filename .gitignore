@@ -1,0 +1,16 @@
+node_modules/
+
+# created by build.sh
+.wget-hsts
+projects_files/
+yarn-global-cache/
+yarn-offline-cache/
+yarn-offline-cache.tar
+LICENSES
+
+# mock_runner
+.bash_history
+.node-gyp/
+exported-artifacts/
+rpmbuild/
+mocker-*.cfg
