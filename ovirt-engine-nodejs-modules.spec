@@ -1,6 +1,6 @@
 Name: ovirt-engine-nodejs-modules
 Version: 1.9.0
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Node.js modules required to build oVirt JavaScript applications
 Group: Virtualization/Management
 License: Multiple
@@ -36,6 +36,9 @@ cp %{SOURCE2} %{buildroot}%{_datadir}/%{name}/.
 %{_datadir}/%{name}
 
 %changelog
+* Wed Aug 21 2019 Michal Skrivanek <michal.skrivanek@redhat.com> - 1.9.0-2
+- remove obsolete scripts
+
 * Tue Aug 20 2019 Scott J Dickerson <sdickers@redhat.com> - 1.9.0-1
   Use the previous build of this package to prefill the offline cache
   to reduce the number of http requests needed to just things that are
