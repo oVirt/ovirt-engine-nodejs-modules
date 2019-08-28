@@ -1,15 +1,23 @@
 Name: ovirt-engine-nodejs-modules
-Version: 1.9.5
-Release: 2%{?dist}
+Version: 2.0.0
+Release: 1%{?dist}
 Summary: Node.js modules required to build oVirt JavaScript applications
 Group: Virtualization/Management
 License: Multiple
 URL: http://ovirt.org
 Source0: %{?_tar}
 Source1: LICENSES
-Source2: setup-env.sh
+Source2: LICENSE-yarn
+Source3: setup-env.sh
+Source4: yarn-1.17.3.js
 
 BuildArch: noarch
+
+# to be replaced in el8
+Requires: ovirt-engine-nodejs
+
+# for existing packages requiring yarn we used to package separately
+Provides: ovirt-engine-yarn
 
 %description
 Node.js modules required to build oVirt JavaScript applications.
@@ -17,8 +25,7 @@ Node.js modules required to build oVirt JavaScript applications.
 %prep
 
 # Copy additional files to build directory:
-cp %{SOURCE1} .
-cp %{SOURCE2} .
+cp %{SOURCE1} %{SOURCE2} %{SOURCE3} %{SOURCE4} .
 
 %install
 
@@ -29,13 +36,17 @@ mkdir -p %{buildroot}%{_datadir}/%{name}
 tar -xf %{SOURCE0} -C %{buildroot}%{_datadir}/%{name}
 
 # Copy additional files to build root:
-cp %{SOURCE2} %{buildroot}%{_datadir}/%{name}/.
+cp %{SOURCE2} %{SOURCE3} %{SOURCE4} %{buildroot}%{_datadir}/%{name}/.
 
 %files
 %license LICENSES
+%license LICENSE-yarn
 %{_datadir}/%{name}
 
 %changelog
+* Fri Aug 30 2019 Michal Skrivanek <michal.skrivanek@redhat.com> - 2.0.0-1
+- pull in latest yarn and deliver it through this package
+
 * Fri Aug 30 2019 Michal Skrivanek <michal.skrivanek@redhat.com> - 1.9.5-2
 - Removed old pre-seed for cockpit-ovirt
 

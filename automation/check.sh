@@ -3,6 +3,8 @@
 # Make sure we remember to update the version and/or release:
 ./automation/check-version-release.sh
 
+[[ $(ls -1 yarn-*.js | wc -l) -ne 1 ]] && { echo "Error: multiple yarn binaries present"; exit 5; }
+
 # The following loop is taken from "build.sh" - the goal is to validate
 # that all project specific files specified in the "projects.list" file
 # are available for the subsequent RPM build:

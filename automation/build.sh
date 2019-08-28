@@ -16,8 +16,8 @@ rm -rf "${artifacts_dir}" && mkdir -p "${artifacts_dir}"
 # Node.js is provided by the "ovirt-engine-nodejs" package:
 PATH="/usr/share/ovirt-engine-nodejs/bin:${PATH}"
 
-# Yarn is provided by the "ovirt-engine-yarn" package:
-PATH="/usr/share/ovirt-engine-yarn/bin:${PATH}"
+# Point to "our" Yarn
+alias yarn="/usr/share/ovirt-engine-nodejs/bin/node ${PWD}/yarn-*.js"
 
 # Make sure we remember to update the version and/or release:
 ./automation/check-version-release.sh

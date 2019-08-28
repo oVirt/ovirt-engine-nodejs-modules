@@ -8,8 +8,8 @@
 # Node.js is provided by the "ovirt-engine-nodejs" package:
 export PATH="/usr/share/ovirt-engine-nodejs/bin:${PATH}"
 
-# Yarn is provided by the "ovirt-engine-yarn" package:
-export PATH="/usr/share/ovirt-engine-yarn/bin:${PATH}"
+# Point to "our" Yarn
+alias yarn="/usr/share/ovirt-engine-nodejs/bin/node /usr/share/ovirt-engine-nodejs/yarn-*.js"
 
 # Tell Yarn to use the offline cache directory provided by
 # the "ovirt-engine-nodejs-modules" package:
