@@ -1,6 +1,6 @@
 Name: ovirt-engine-nodejs-modules
 Version: 1.9.4
-Release: 3%{?dist}
+Release: 4%{?dist}
 Summary: Node.js modules required to build oVirt JavaScript applications
 Group: Virtualization/Management
 License: Multiple
@@ -36,6 +36,11 @@ cp %{SOURCE2} %{buildroot}%{_datadir}/%{name}/.
 %{_datadir}/%{name}
 
 %changelog
+* Wed Aug 28 2019 Scott J Dickerson <sdickers@redhat.com> - 1.9.4-4
+- Removed old pre-seeds for ovirt-engine-ui-extensions
+- Removed old pre-seeds for ovirt-web-ui
+- Renamed ovirt-web-ui pre-seed folders to reflect the related PR
+
 * Wed Aug 28 2019 Scott J Dickerson <sdickers@redhat.com> - 1.9.4-3
 - fix location of nodejs-modules repo in build.repos of stdci v2
 
