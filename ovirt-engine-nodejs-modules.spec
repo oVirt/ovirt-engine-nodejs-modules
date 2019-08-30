@@ -1,6 +1,6 @@
 Name: ovirt-engine-nodejs-modules
-Version: 1.9.4
-Release: 5%{?dist}
+Version: 1.9.5
+Release: 1%{?dist}
 Summary: Node.js modules required to build oVirt JavaScript applications
 Group: Virtualization/Management
 License: Multiple
@@ -36,6 +36,10 @@ cp %{SOURCE2} %{buildroot}%{_datadir}/%{name}/.
 %{_datadir}/%{name}
 
 %changelog
+* Fri Aug 30 2019 Michal Skrivanek <michal.skrivanek@redhat.com> - 1.9.5-1
+- Change pre-seed dirname structure to project_changeid or project_pr#
+- Add checking for PR/ChangeId validity of pre-seeds
+
 * Fri Aug 30 2019 Michal Skrivanek <michal.skrivanek@redhat.com> - 1.9.4-5
 - Removed old (all) pre-seeds for ovirt-cockpit
 - Remove obsolete branches from projects.list
