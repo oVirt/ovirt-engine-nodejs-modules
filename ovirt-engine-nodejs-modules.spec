@@ -1,6 +1,6 @@
 Name: ovirt-engine-nodejs-modules
 Version: 1.9.5
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Node.js modules required to build oVirt JavaScript applications
 Group: Virtualization/Management
 License: Multiple
@@ -36,6 +36,9 @@ cp %{SOURCE2} %{buildroot}%{_datadir}/%{name}/.
 %{_datadir}/%{name}
 
 %changelog
+* Fri Aug 30 2019 Michal Skrivanek <michal.skrivanek@redhat.com> - 1.9.5-2
+- Removed old pre-seed for cockpit-ovirt
+
 * Fri Aug 30 2019 Michal Skrivanek <michal.skrivanek@redhat.com> - 1.9.5-1
 - Change pre-seed dirname structure to project_changeid or project_pr#
 - Add checking for PR/ChangeId validity of pre-seeds
@@ -53,7 +56,7 @@ cp %{SOURCE2} %{buildroot}%{_datadir}/%{name}/.
 * Wed Aug 28 2019 Scott J Dickerson <sdickers@redhat.com> - 1.9.4-3
 - fix location of nodejs-modules repo in build.repos of stdci v2
 
-* Thu Aug 27 2019 Michal Skrivanek <michal.skrivanek@redhat.com> - 1.9.4-2
+* Tue Aug 27 2019 Michal Skrivanek <michal.skrivanek@redhat.com> - 1.9.4-2
 - move automation to stdci v2
 
 * Fri Aug 23 2019 Charles Thao <cthao@redhat.com> - 1.9.4-1
@@ -132,7 +135,7 @@ cp %{SOURCE2} %{buildroot}%{_datadir}/%{name}/.
 * Mon Mar 4 2019 Scott J Dickerson <sdickers@redhat.com> - 1.8.8-1
 - pre-seed for ovirt-web-ui
 
-* Fri Feb 27 2019 Bohdan Iakymets <biakymet@redhat.com> - 1.8.7-1
+* Wed Feb 27 2019 Bohdan Iakymets <biakymet@redhat.com> - 1.8.7-1
 - pre-seed for ovirt-web-ui
 
 * Fri Feb 1 2019 Greg Sheremeta <gshereme@redhat.com> - 1.8.6-1
