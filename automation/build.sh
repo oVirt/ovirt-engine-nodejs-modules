@@ -17,7 +17,10 @@ rm -rf "${artifacts_dir}" && mkdir -p "${artifacts_dir}"
 PATH="/usr/share/ovirt-engine-nodejs/bin:${PATH}"
 
 # Point to "our" Yarn
-alias yarn="/usr/share/ovirt-engine-nodejs/bin/node ${PWD}/yarn-*.js"
+YARN=$(find . -name yarn-*.js)
+alias yarn="/usr/share/ovirt-engine-nodejs/bin/node ${YARN}"
+sed "s/__YARN__/$(basename ${YARN})/g" setup-env.sh.in > setup-env.sh
+chmod +x setup-env.sh
 
 # Make sure we remember to update the version and/or release:
 ./automation/check-version-release.sh
