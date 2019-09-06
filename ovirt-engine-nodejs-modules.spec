@@ -1,5 +1,5 @@
 Name: ovirt-engine-nodejs-modules
-Version: 2.0.4
+Version: 2.0.5
 Release: 1%{?dist}
 Summary: Node.js modules required to build oVirt JavaScript applications
 Group: Virtualization/Management
@@ -23,20 +23,24 @@ Provides: ovirt-engine-yarn
 Node.js modules required to build oVirt JavaScript applications.
 
 %prep
-
 # Copy additional files to build directory:
 cp %{SOURCE1} %{SOURCE2} %{SOURCE3} %{SOURCE4} .
 
 %install
+%define dest %{buildroot}%{_datadir}/%{name}
 
 # Create the destination directory in build root:
-mkdir -p %{buildroot}%{_datadir}/%{name}
+mkdir -p %{dest}
+mkdir -p %{dest}/bin
 
-# Uncompress the offline cache tarball:
-tar -xf %{SOURCE0} -C %{buildroot}%{_datadir}/%{name}
+# Extract the offline cache tarball:
+tar -xf %{SOURCE0} -C %{dest}
 
-# Copy additional files to build root:
-cp %{SOURCE2} %{SOURCE3} %{SOURCE4} %{buildroot}%{_datadir}/%{name}/.
+# Copy additional (non license) files to build root:
+cp %{SOURCE3} %{dest}
+
+# install yarn-X.Y.Z.js in bin/ as normal executable
+install -m 555 %{SOURCE4} %{dest}/bin/yarn
 
 %files
 %license LICENSES
@@ -44,6 +48,9 @@ cp %{SOURCE2} %{SOURCE3} %{SOURCE4} %{buildroot}%{_datadir}/%{name}/.
 %{_datadir}/%{name}
 
 %changelog
+* Thu Sep 10 2019 Scott J Dickerson <sdickers@redhat.com> - 2.0.5-1
+- install yarn-*.js as an executable to avoid using an alias/function in setup-env.sh
+
 * Tue Sep 10 2019 Bohdan Iakymets <biakymet@redhat.com> - 2.0.4-1
 - update pre-seeds for ovirt-web-ui
    Add: https://github.com/oVirt/ovirt-web-ui/pull/1117

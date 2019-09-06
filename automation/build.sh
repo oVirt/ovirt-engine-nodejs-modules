@@ -1,4 +1,4 @@
-#!/bin/sh -ex
+#!/bin/bash -ex
 
 DISTVER="$(rpm --eval "%dist"|cut -c2-3)"
 PACKAGER=""
@@ -8,19 +8,9 @@ else
     PACKAGER=dnf
 fi
 
-
 # Make sure the artifacts directory is empty:
 artifacts_dir="${PWD}/exported-artifacts"
 rm -rf "${artifacts_dir}" && mkdir -p "${artifacts_dir}"
-
-# Node.js is provided by the "ovirt-engine-nodejs" package:
-PATH="/usr/share/ovirt-engine-nodejs/bin:${PATH}"
-
-# Point to "our" Yarn
-YARN=$(find . -name yarn-*.js)
-alias yarn="/usr/share/ovirt-engine-nodejs/bin/node ${YARN}"
-sed "s/__YARN__/$(basename ${YARN})/g" setup-env.sh.in > setup-env.sh
-chmod +x setup-env.sh
 
 # Make sure we remember to update the version and/or release:
 ./automation/check-version-release.sh
@@ -31,6 +21,20 @@ chmod +x setup-env.sh
 dependencies="$(sed -e '/^[ \t]*$/d' -e '/^#/d' automation/build.packages.force)"
 ${PACKAGER} clean metadata
 ${PACKAGER} -y install ${dependencies}
+
+# Node.js is provided by the "ovirt-engine-nodejs" package:
+PATH="/usr/share/ovirt-engine-nodejs/bin:${PATH}"
+which node
+node --version
+
+# Point to "our" Yarn (and since the js has an initial hashbang, it can run itself)
+YARN=$(find "${PWD}" -maxdepth 1 -name 'yarn-*.js')
+chmod +x "$YARN"
+yarn () {
+  "$YARN" $*
+}
+export yarn
+yarn --version
 
 # Create the "projects_files" directory to collect all project
 # specific files used when building this package:
@@ -56,7 +60,7 @@ yarn_global_cache_path="$(yarn cache dir)"
 rm -rf "${yarn_global_cache_dir}"
 
 
-# Populate offline cache for the last build of this project:
+# Populate offline cache from the last build of this project:
 nodejs_modules_cache="/usr/share/ovirt-engine-nodejs-modules/yarn-offline-cache"
 if [[ -d "${nodejs_modules_cache}" ]]; then
   find "${nodejs_modules_cache}" -name "*.tgz" -exec mv {} "${yarn_offline_cache_dir}" \;
@@ -64,6 +68,8 @@ if [[ -d "${nodejs_modules_cache}" ]]; then
 fi
 
 
+GITHUB='githubusercontent.*/.+?/(.+?)/(.+?)/\{FILE\}'
+GERRIT='gerrit.*p=(.+?).git.*hb=(refs/heads/)?(.*)$'
 # The "projects.list" file contains URLs, each one referencing
 # a "package.json" file and the associated "yarn.lock" file for
 # the given project.
@@ -88,8 +94,11 @@ sed -e '/^[ \t]*$/d' -e '/^#/d' projects.list | while read -r line; do
     # Copy downloaded files into the "projects_files" directory,
     # use the "backup" argument to prevent over-writing the file
     # if it exists:
-    cp --backup=t "package.json" "${projects_files_dir}/package.json"
-    cp --backup=t "yarn.lock" "${projects_files_dir}/yarn.lock"
+    DIR=''
+    [[ $line =~ $GITHUB ]] && DIR=${BASH_REMATCH[1]}_${BASH_REMATCH[2]}
+    [[ $line =~ $GERRIT ]] && DIR=${BASH_REMATCH[1]}_${BASH_REMATCH[3]/HEAD/master}
+    [[ $DIR != '' ]] && mkdir "${projects_files_dir}/$DIR"
+    cp --backup=t package.json yarn.lock "${projects_files_dir}/$DIR"
 
     # Download JavaScript dependencies using Yarn, this will
     # populate the "node_modules" directory as well as update
@@ -118,30 +127,33 @@ find pre-seed -mindepth 1 -maxdepth 1 -type d | while read -r dname; do
 
 done
 
-# Clean up intermediate files left behind:
 rm -rf "package.json" "yarn.lock" "node_modules"
+
+#
+# Remove any pre-populate offline cache packages that were not referenced
+# by the current set of projects.list pulls or pre-seeds..
+#
+# TODO: Compare the yarn-global-cache to the yarn-offline-cache and remove the tgz
+# TODO: for any package that did not make it to yarn-global-cache.
 
 # Remove the "LICENSES" file before generating a new one:
 rm -rf "LICENSES"
 
 # For each source file located in the offline cache directory,
 # resolve its license and append it into the "LICENSES" file:
-for src_file in `find ${yarn_offline_cache_dir} -type f -name *.tgz | sort`; do
-
-    # Example: 'path-exists-3.0.0'
-    src_file_base=`basename ${src_file} | sed 's/\.tgz$//'`
+for src_file in `find ${yarn_offline_cache_dir} -type f -name '*.tgz' -exec basename -s .tgz {} \; | sort`; do
 
     # Find the corresponding "package.json" file within Yarn's
     # global cache directory:
     src_package_json=`readlink -f \
-        $(find ${yarn_global_cache_path}/*${src_file_base}* -type f -name package.json | head -1)` || /bin/true
+        $(find ${yarn_global_cache_path}/*${src_file}* -type f -name package.json | head -1)` || /bin/true
 
     if [ -n "$src_package_json" ]; then
         # Parse the license from the "package.json" file:
         src_license=`jq -r '.license' ${src_package_json}`
 
         # Append license information into the "LICENSES" file:
-        printf "${src_file_base}\n  License: ${src_license}\n" >> LICENSES
+        printf "${src_file}\n  License: ${src_license}\n" >> LICENSES
     fi
 
 done
