@@ -69,9 +69,8 @@
     "whatwg-fetch": "1.0.0"
   },
   "dependencies": {
-    "@patternfly/react-charts": "4.4.17",
     "@patternfly/react-console": "1.10.22",
-    "@patternfly/react-tokens": "2.6.9",
+    "@patternfly/react-core": "3.87.3",
     "babel-polyfill": "6.26.0",
     "blob-util": "1.2.1",
     "bootstrap": "3.4.1",
@@ -105,8 +104,7 @@
     "react-router-navigation-prompt": "1.6.3",
     "react-test-renderer": "16.8.6",
     "redux": "4.0.0",
-    "redux-saga": "0.16.0",
-    "victory": "32.3.1"
+    "redux-saga": "0.16.0"
   },
   "resolutions": {
     "redux": "4.0.0",
@@ -144,7 +142,7 @@
       "_/(.*)$": "<rootDir>/src/$1"
     },
     "transform": {
-      ".+\\.(jsx?)$": "<rootDir>/config/jest/transform.js"
+      ".*": "<rootDir>/config/jest/transform.js"
     },
     "setupFiles": [
       "<rootDir>/config/polyfills.js",
