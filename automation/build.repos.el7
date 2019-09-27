@@ -1,0 +1,2 @@
+# for ovirt-engine-nodejs and ovirt-engine-nodejs-modules for cache prefill
+ovirt-tested,https://resources.ovirt.org/repos/ovirt/tested/master/rpm/$distro/

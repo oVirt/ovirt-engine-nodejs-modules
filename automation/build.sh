@@ -1,6 +1,7 @@
 #!/bin/bash -ex
 
-DISTVER="$(rpm --eval "%dist"|cut -c2-3)"
+DIST=$(rpm --eval "%dist")
+DISTVER="$(echo ${DIST}|cut -c2-3)"
 PACKAGER=""
 if [[ "${DISTVER}" == "el" ]]; then
     PACKAGER=yum
@@ -15,14 +16,8 @@ rm -rf "${artifacts_dir}" && mkdir -p "${artifacts_dir}"
 # Make sure we remember to update the version and/or release:
 ./automation/check-version-release.sh
 
-# The "build.packages.force" file contains BuildRequires packages
-# to be installed using their latest version.
-# Force CI to get the latest version of these packages:
-dependencies="$(sed -e '/^[ \t]*$/d' -e '/^#/d' automation/build.packages.force)"
-${PACKAGER} clean metadata
-${PACKAGER} -y install ${dependencies}
-
 # Node.js is provided by the "ovirt-engine-nodejs" package:
+# not needed on fc30/el8, remove when dropping fc29&el7
 PATH="/usr/share/ovirt-engine-nodejs/bin:${PATH}"
 which node
 node --version

@@ -10,7 +10,7 @@ applications.
 Modify your build script and/or CI job configuration to ensure following
 packages are installed when building your project:
 
-* `ovirt-engine-nodejs`
+* `ovirt-engine-nodejs` or `nodejs` on Fedora 30 / EL 8
 * `ovirt-engine-nodejs-modules`
 
 It's highly recommended to specify an explicit `Version-Release` when

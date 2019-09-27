@@ -2,3 +2,5 @@ git
 jq
 wget
 dnf
+nodejs
+ovirt-engine-nodejs-modules
