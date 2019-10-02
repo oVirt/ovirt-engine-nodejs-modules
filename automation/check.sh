@@ -15,10 +15,11 @@ sed -e '/^[ \t]*$/d' -e '/^#/d' projects.list | while read -r line; do
     yarn_lock_url="${line/\{FILE\}/yarn.lock}"
 
     wget -qO "package.json" "${package_json_url}" || exit 1
-
     echo "  project name: $(jq '.name' package.json)"
+    rm package.json
 
     wget -qO "yarn.lock" "${yarn_lock_url}" || exit 2
+    rm yarn.lock
 done
 
 # Check if all pre-seeds are still valid - PR needs to be opened and not merged or abandoned

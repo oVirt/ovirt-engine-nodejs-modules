@@ -1,6 +1,9 @@
 node_modules/
+.vscode/
 
 # created by build.sh
+sources.tar
+yarn-install*.har
 .wget-hsts
 projects_files/
 yarn-global-cache/

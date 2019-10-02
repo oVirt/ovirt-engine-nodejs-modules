@@ -1,15 +1,12 @@
 Name: ovirt-engine-nodejs-modules
-Version: 2.0.9
+Version: 2.0.10
 Release: 1%{?dist}
 Summary: Node.js modules required to build oVirt JavaScript applications
 Group: Virtualization/Management
 License: Multiple
 URL: http://ovirt.org
-Source0: %{?_tar}
-Source1: LICENSES
-Source2: LICENSE-yarn
-Source3: setup-env.sh
-Source4: yarn-1.17.3.js
+Source0: %{?_offline_cache_tar}
+Source1: sources.tar
 
 BuildArch: noarch
 
@@ -23,24 +20,23 @@ Provides: ovirt-engine-yarn
 Node.js modules required to build oVirt JavaScript applications.
 
 %prep
-# Copy additional files to build directory:
-cp %{SOURCE1} %{SOURCE2} %{SOURCE3} %{SOURCE4} .
+tar -xf %{SOURCE1}
 
 %install
 %define dest %{buildroot}%{_datadir}/%{name}
 
 # Create the destination directory in build root:
-mkdir -p %{dest}
-mkdir -p %{dest}/bin
+install -d %{dest}/bin
 
 # Extract the offline cache tarball:
 tar -xf %{SOURCE0} -C %{dest}
 
-# Copy additional (non license) files to build root:
-cp %{SOURCE3} %{dest}
+# Copy additional (non license, non doc) files to build root:
+install setup-env.sh %{dest}
+install projects_files.tar %{dest}
 
 # install yarn-X.Y.Z.js in bin/ as normal executable
-install -m 555 %{SOURCE4} %{dest}/bin/yarn
+install -m 555 %{_yarn} %{dest}/bin/yarn
 
 %files
 %license LICENSES
@@ -48,6 +44,12 @@ install -m 555 %{SOURCE4} %{dest}/bin/yarn
 %{_datadir}/%{name}
 
 %changelog
+* Tue Oct 1 2019 Scott J Dickerson <sdickers@redhat.com> - 2.0.10-1
+- add reporting on yarn network fetches
+- use symlinks to pre-fill the offline cache
+- remove cached packages no longer in use
+- update LICENSES generation to run fast
+
 * Tue Sep 24 2019 Scott J Dickerson <sdickers@redhat.com> - 2.0.9-1
 - update pre-seed for ovirt-web-ui
   https://github.com/oVirt/ovirt-web-ui/pull/1091
@@ -67,7 +69,7 @@ install -m 555 %{SOURCE4} %{dest}/bin/yarn
 * Tue Sep 10 2019 Ondra Machacek <omachace@redhat.com> - 2.0.6-1
 - pre-seed for ovirt-engine-api-explorer
 
-* Thu Sep 10 2019 Scott J Dickerson <sdickers@redhat.com> - 2.0.5-1
+* Tue Sep 10 2019 Scott J Dickerson <sdickers@redhat.com> - 2.0.5-1
 - install yarn-*.js as an executable to avoid using an alias/function in setup-env.sh
 
 * Tue Sep 10 2019 Bohdan Iakymets <biakymet@redhat.com> - 2.0.4-1

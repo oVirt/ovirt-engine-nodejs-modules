@@ -31,7 +31,7 @@ node --version
 YARN=$(find "${PWD}" -maxdepth 1 -name 'yarn-*.js')
 chmod +x "$YARN"
 yarn () {
-  "$YARN" $*
+    "$YARN" $*
 }
 export yarn
 yarn --version
@@ -59,14 +59,12 @@ yarn_global_cache_path="$(yarn cache dir)"
 # Clean up the global cache directory:
 rm -rf "${yarn_global_cache_dir}"
 
-
 # Populate offline cache from the last build of this project:
 nodejs_modules_cache="/usr/share/ovirt-engine-nodejs-modules/yarn-offline-cache"
 if [[ -d "${nodejs_modules_cache}" ]]; then
-  find "${nodejs_modules_cache}" -name "*.tgz" -exec mv {} "${yarn_offline_cache_dir}" \;
-  echo "Prefilled the offline cache from $(rpm -q ovirt-engine-nodejs-modules)"
+    find "${nodejs_modules_cache}" -name "*.tgz" -exec ln -s {} "${yarn_offline_cache_dir}"/ \;
+    echo "Prefilled the offline cache from $(rpm -q ovirt-engine-nodejs-modules)"
 fi
-
 
 GITHUB='githubusercontent.*/.+?/(.+?)/(.+?)/\{FILE\}'
 GERRIT='gerrit.*p=(.+?).git.*hb=(refs/heads/)?(.*)$'
@@ -103,7 +101,7 @@ sed -e '/^[ \t]*$/d' -e '/^#/d' projects.list | while read -r line; do
     # Download JavaScript dependencies using Yarn, this will
     # populate the "node_modules" directory as well as update
     # the offline cache directory:
-    yarn install --pure-lockfile
+    yarn install --pure-lockfile  --har
 
 done
 
@@ -123,61 +121,60 @@ find pre-seed -mindepth 1 -maxdepth 1 -type d | while read -r dname; do
     # Download JavaScript dependencies using Yarn, this will
     # populate the "node_modules" directory as well as update
     # the offline cache directory:
-    yarn install --pure-lockfile
+    yarn install --pure-lockfile --har
 
 done
 
 rm -rf "package.json" "yarn.lock" "node_modules"
 
 #
-# Remove any pre-populate offline cache packages that were not referenced
-# by the current set of projects.list pulls or pre-seeds..
+# Report some yarn request statistics
 #
-# TODO: Compare the yarn-global-cache to the yarn-offline-cache and remove the tgz
-# TODO: for any package that did not make it to yarn-global-cache.
+echo "yarn install count: $(ls -1 *.har | wc -l)" | tee yarn_network_stats.txt
+echo "yarn request count: $(jq -s '[.[].log.entries | length] | add' *.har)" | tee -a yarn_network_stats.txt
+echo "yarn fetches for packages not included in offline pre-fill:" | tee -a yarn_network_stats.txt
+jq '.log.entries[].request.url as $url | select($url | contains("registry")) | $url' *.har | sort | tee -a yarn_network_stats.txt
+rm *.har
 
-# Remove the "LICENSES" file before generating a new one:
-rm -rf "LICENSES"
+# Remove offline cache modules that are no longer being used
+GLOBAL_CACHE="${yarn_global_cache_dir}" OFFLINE_CACHE="${yarn_offline_cache_dir}" ./automation/_build-prune-cache.sh
 
-# For each source file located in the offline cache directory,
-# resolve its license and append it into the "LICENSES" file:
-for src_file in `find ${yarn_offline_cache_dir} -type f -name '*.tgz' -exec basename -s .tgz {} \; | sort`; do
+# Build the "LICENSES" file, one entry per package cached by this module
+GLOBAL_CACHE="${yarn_global_cache_dir}" ./automation/_build-licenses.sh
 
-    # Find the corresponding "package.json" file within Yarn's
-    # global cache directory:
-    src_package_json=`readlink -f \
-        $(find ${yarn_global_cache_path}/*${src_file}* -type f -name package.json | head -1)` || /bin/true
-
-    if [ -n "$src_package_json" ]; then
-        # Parse the license from the "package.json" file:
-        src_license=`jq -r '.license' ${src_package_json}`
-
-        # Append license information into the "LICENSES" file:
-        printf "${src_file}\n  License: ${src_license}\n" >> LICENSES
-    fi
-
-done
-
-# Pack the offline cache directory into a tarball:
-yarn_offline_cache_tar="${yarn_offline_cache_dir}.tar"
-tar -cf "${yarn_offline_cache_tar}" "${yarn_offline_cache_dir}"
+# Expose the "projects_files" and "pre-seed" directory contents as a tarball
+# in the artifacts directory:
+tar -cf projects_files.tar "${projects_files_dir}" "pre-seed"
 
 # Expose the offline cache directory listing in the artifacts
 # directory (used to verify bundled JavaScript dependencies):
-ls -1 "${yarn_offline_cache_dir}" > "${artifacts_dir}/bundled_dependencies.list"
+ls -1 "${yarn_offline_cache_dir}" > yarn_offline_cache.list
 
-# Expose the "projects_files" directory content as a tarball
-# in the artifacts directory:
-tar -cf "${artifacts_dir}/projects_files.tar" "${projects_files_dir}"
+# Pack the source tarballs
+yarn_offline_cache_tar="${yarn_offline_cache_dir}.tar"
+tar --dereference -cf "${yarn_offline_cache_tar}" "${yarn_offline_cache_dir}"
 
-# The name of the package:
-name="ovirt-engine-nodejs-modules"
+tar cf sources.tar \
+    setup-env.sh \
+    yarn-*.js \
+    LICENSES \
+    LICENSE-yarn \
+    projects_files.tar \
+    yarn_network_stats.txt \
+    yarn_offline_cache.list
+
+# Collect artifacts
+mv projects_files.tar \
+    yarn_network_stats.txt \
+    yarn_offline_cache.list \
+    "${artifacts_dir}"
 
 # Build the source and binary packages:
 rpmbuild \
     -ba \
-    --define "_tar ${yarn_offline_cache_tar}" \
+    --define="_offline_cache_tar ${yarn_offline_cache_tar}" \
+    --define="_yarn $(basename ${YARN})" \
     --define="_sourcedir ${PWD}" \
     --define="_srcrpmdir ${artifacts_dir}" \
     --define="_rpmdir ${artifacts_dir}" \
-    "${name}.spec"
+    "ovirt-engine-nodejs-modules.spec"

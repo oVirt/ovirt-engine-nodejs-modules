@@ -1,4 +1,4 @@
-#!/bin/sh -ex
+#!/bin/sh -e
 
 if ! git show -- *.spec | \
     grep '^+\(Version:\|Release:\)'
