@@ -1,14 +1,5 @@
 #!/bin/bash -ex
 
-DIST=$(rpm --eval "%dist")
-DISTVER="$(echo ${DIST}|cut -c2-3)"
-PACKAGER=""
-if [[ "${DISTVER}" == "el" ]]; then
-    PACKAGER=yum
-else
-    PACKAGER=dnf
-fi
-
 # Make sure the artifacts directory is empty:
 artifacts_dir="${PWD}/exported-artifacts"
 rm -rf "${artifacts_dir}" && mkdir -p "${artifacts_dir}"
@@ -127,8 +118,7 @@ rm -rf "package.json" "yarn.lock" "node_modules"
 #
 echo "yarn install count: $(ls -1 *.har | wc -l)" | tee yarn_network_stats.txt
 echo "yarn request count: $(jq -s '[.[].log.entries | length] | add' *.har)" | tee -a yarn_network_stats.txt
-echo "yarn fetches for packages not included in offline pre-fill:" | tee -a yarn_network_stats.txt
-jq '.log.entries[].request.url as $url | select($url | contains("registry")) | $url' *.har | sort | tee -a yarn_network_stats.txt
+echo "yarn fetches for packages not included in offline pre-fill:" $(jq '.log.entries[].request.url as $url | select($url | contains("registry")) | $url' *.har | sort) | tee -a yarn_network_stats.txt
 rm *.har
 
 # Remove offline cache modules that are no longer being used

@@ -1,6 +1,6 @@
 Name: ovirt-engine-nodejs-modules
 Version: 2.0.10
-Release: 3%{?dist}
+Release: 4%{?dist}
 Summary: Node.js modules required to build oVirt JavaScript applications
 Group: Virtualization/Management
 License: Multiple
@@ -49,6 +49,10 @@ install -m 555 %{_yarn} %{dest}/bin/yarn
 %{_datadir}/%{name}
 
 %changelog
+* Thu Oct 3 2019 Michal Skrivanek <michal.skrivanek@redhat.com> - 2.0.10-4
+- fix yarn stats logging
+- simplify CI deps
+
 * Thu Oct 3 2019 Michal Skrivanek <michal.skrivanek@redhat.com> - 2.0.10-3
 - fix spec condition for nodejs vs ovirt-engine-nodejs
 
