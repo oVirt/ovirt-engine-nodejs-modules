@@ -1,6 +1,6 @@
 Name: ovirt-engine-nodejs-modules
 Version: 2.0.10
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Node.js modules required to build oVirt JavaScript applications
 Group: Virtualization/Management
 License: Multiple
@@ -10,12 +10,12 @@ Source1: sources.tar
 
 BuildArch: noarch
 
-%if ( 0%{?fedora} <= 29 || 0%{?rhel} <= 7 )
-BuildRequires: ovirt-engine-nodejs
-Requires: ovirt-engine-nodejs
-%else
+%if ( 0%{?fedora} >= 30 || 0%{?rhel} >= 8 )
 BuildRequires: nodejs
 Requires: nodejs
+%else
+BuildRequires: ovirt-engine-nodejs
+Requires: ovirt-engine-nodejs
 %endif
 
 # for existing packages requiring yarn we used to package separately
@@ -49,6 +49,9 @@ install -m 555 %{_yarn} %{dest}/bin/yarn
 %{_datadir}/%{name}
 
 %changelog
+* Thu Oct 3 2019 Michal Skrivanek <michal.skrivanek@redhat.com> - 2.0.10-3
+- fix spec condition for nodejs vs ovirt-engine-nodejs
+
 * Wed Oct 2 2019 Michal Skrivanek <michal.skrivanek@redhat.com> - 2.0.10-2
 - add el8, fc30 targets
 - use standard nodejs from fedore & el8
