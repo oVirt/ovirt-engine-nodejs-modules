@@ -1,6 +1,6 @@
 Name: ovirt-engine-nodejs-modules
-Version: 2.0.10
-Release: 4%{?dist}
+Version: 2.0.11
+Release: 1%{?dist}
 Summary: Node.js modules required to build oVirt JavaScript applications
 Group: Virtualization/Management
 License: Multiple
@@ -31,17 +31,18 @@ tar -xf %{SOURCE1}
 %define dest %{buildroot}%{_datadir}/%{name}
 
 # Create the destination directory in build root:
-install -d %{dest}/bin
+install -d -m 755  %{dest}/bin
 
 # Extract the offline cache tarball:
 tar -xf %{SOURCE0} -C %{dest}
 
 # Copy additional (non license, non doc) files to build root:
-install setup-env.sh %{dest}
-install projects_files.tar %{dest}
+sed 's/@NVR@/%{name}-%{version}-%{release}/' setup-env.sh.in > setup-env.sh
+install -m 755 setup-env.sh %{dest}
+install -m 644 projects_files.tar %{dest}
 
 # install yarn-X.Y.Z.js in bin/ as normal executable
-install -m 555 %{_yarn} %{dest}/bin/yarn
+install -m 755 %{_yarn} %{dest}/bin/yarn
 
 %files
 %license LICENSES
@@ -49,6 +50,10 @@ install -m 555 %{_yarn} %{dest}/bin/yarn
 %{_datadir}/%{name}
 
 %changelog
+* Fri Oct 4 2019 Michal Skrivanek <michal.skrivanek@redhat.com> - 2.0.11-1
+- fix projects_files.tar permissions not to be executable
+- echo a version-release when sourcing the environment file
+
 * Thu Oct 3 2019 Michal Skrivanek <michal.skrivanek@redhat.com> - 2.0.10-4
 - fix yarn stats logging
 - simplify CI deps

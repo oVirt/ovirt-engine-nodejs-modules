@@ -140,7 +140,7 @@ yarn_offline_cache_tar="${yarn_offline_cache_dir}.tar"
 tar --dereference -cf "${yarn_offline_cache_tar}" "${yarn_offline_cache_dir}"
 
 tar cf sources.tar \
-    setup-env.sh \
+    setup-env.sh.in \
     yarn-*.js \
     LICENSES \
     LICENSE-yarn \
