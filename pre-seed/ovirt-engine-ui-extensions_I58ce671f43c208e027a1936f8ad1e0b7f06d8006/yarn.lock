@@ -1011,12 +1011,12 @@
     "@types/istanbul-reports" "^1.1.1"
     "@types/yargs" "^13.0.0"
 
-"@patternfly/patternfly@2.40.6", "@patternfly/patternfly@^2.40.2":
+"@patternfly/patternfly@2.40.6", "@patternfly/patternfly@^2.40.6":
   version "2.40.6"
   resolved "https://registry.yarnpkg.com/@patternfly/patternfly/-/patternfly-2.40.6.tgz#f1e13069c6c948e194de53bbd00a031bb0ddd051"
   integrity sha512-YIusipnIPipCJNKN/Lw72MmV1dnsFQvc8Exwo5+IfROF2TnWMpVYaFPC3TvqnuMrysxrxpuGC2HzKJVX5bqbgA==
 
-"@patternfly/react-charts@^5.0.13":
+"@patternfly/react-charts@^5.1.5":
   version "5.1.5"
   resolved "https://registry.yarnpkg.com/@patternfly/react-charts/-/react-charts-5.1.5.tgz#00c13fd02985eb66805078e26234345f845eb054"
   integrity sha512-V0lrhzrCEC8vPwKJkaH+g0+FQwUV+g13esQdIDKjVNpjhBlK6hCLCY8cvcRvvzB0UFULdqGfClK7YKzf3QjpXg==
@@ -1030,7 +1030,7 @@
     victory-core "^33.0.1"
     victory-legend "^33.0.1"
 
-"@patternfly/react-core@^3.120.3":
+"@patternfly/react-core@^3.120.5":
   version "3.120.5"
   resolved "https://registry.yarnpkg.com/@patternfly/react-core/-/react-core-3.120.5.tgz#5b0c68677e65359af6f47eec0af8064b7731da4f"
   integrity sha512-OHENdm3/xj54Aacip5kyPXZVM8PXlFfB53SUf45dGU68kEtTMLdSXG0prfIRsxeX2Bgj/hrdfb2T7rjQK3UKQA==
@@ -1043,7 +1043,7 @@
     focus-trap-react "^4.0.1"
     tippy.js "3.4.1"
 
-"@patternfly/react-icons@^3.14.15", "@patternfly/react-icons@^3.14.18":
+"@patternfly/react-icons@^3.14.18":
   version "3.14.18"
   resolved "https://registry.yarnpkg.com/@patternfly/react-icons/-/react-icons-3.14.18.tgz#75c314c9009cbbe0c352a87ad0ef400743a49d57"
   integrity sha512-dkJ4e37XKlXJmHk00mLQ8Tkqm4pacNvPlNtjgetzGQF9cwCi0Rr4m4f537uTNVPNNwMRGNhuJNI10Mqbu+eHng==
