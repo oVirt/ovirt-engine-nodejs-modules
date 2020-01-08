@@ -70,8 +70,9 @@
   },
   "dependencies": {
     "@patternfly/react-charts": "4.4.17",
-    "@patternfly/react-console": "1.12.0",
+    "@patternfly/react-console": "1.12.2",
     "@patternfly/react-tokens": "2.6.9",
+    "@patternfly/react-core": "3.87.3",
     "babel-polyfill": "6.26.0",
     "blob-util": "1.2.1",
     "bootstrap": "3.4.1",
@@ -110,16 +111,15 @@
   },
   "resolutions": {
     "redux": "4.0.0",
-    "lodash": "4.17.14",
     "js-yaml": "3.13.1"
   },
-  "autogenTest": "Makefile",
-  "autogenCmd": "./autogen.sh --prefix=/usr --datarootdir=/share",
   "scripts": {
-    "start": "(test -e $npm_package_autogenTest || $npm_package_autogenCmd) && node scripts/start.js",
+    "preinstall": "test -e ./autogen.sh && ./autogen.sh --prefix=/usr --datarootdir=/share || :",
+    "clean": "make distclean",
+    "start": "node scripts/start.js",
     "prebuild": "yarn run test",
     "build": "node scripts/build.js",
-    "pretest": "(test -e $npm_package_autogenTest || $npm_package_autogenCmd) && node scripts/pretest.js",
+    "pretest": "node scripts/pretest.js",
     "test": "jest --no-watchman",
     "test:watch": "yarn run pretest && jest --watch --no-watchman",
     "eslint": "eslint -c config/eslint.js src",
@@ -129,7 +129,8 @@
     "intl:push": "zanata-cli push",
     "intl:pull": "zanata-cli pull -e",
     "intl:apply": "rip po2json -o extra/from-zanata/translated-messages.json -m extra/to-zanata/messages.json 'extra/from-zanata/*.po' && babel-node scripts/intl/normalize-messages.js --presets env,flow",
-    "intl:report": "babel-node scripts/intl/report.js --presets env,flow"
+    "intl:report": "babel-node scripts/intl/report.js --presets env,flow",
+    "intl:sync": "babel-node scripts/intl/sync-messages.js --presets env,flow"
   },
   "jest": {
     "moduleFileExtensions": [
