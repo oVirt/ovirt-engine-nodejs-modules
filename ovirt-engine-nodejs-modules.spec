@@ -1,5 +1,5 @@
 Name: ovirt-engine-nodejs-modules
-Version: 2.0.15
+Version: 2.0.16
 Release: 1%{?dist}
 Summary: Node.js modules required to build oVirt JavaScript applications
 Group: Virtualization/Management
@@ -50,6 +50,9 @@ install -m 755 %{_yarn} %{dest}/bin/yarn
 %{_datadir}/%{name}
 
 %changelog
+* Sat Feb 29 2020 Scott J Dickerson <sdickers@redhat.com> - 2.0.16-1
+- add pre-seed for https://gerrit.ovirt.org/#/c/101916/
+
 * Thu Jan 19 2020 Gal Zaidman <gzaidman@redhat.com> - 2.0.15-1
 - add pre-seed for https://gerrit.ovirt.org/#/c/105504/
 
