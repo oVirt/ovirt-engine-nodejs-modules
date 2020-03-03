@@ -129,7 +129,7 @@ GLOBAL_CACHE="${yarn_global_cache_dir}" ./automation/_build-licenses.sh
 
 # Expose the "projects_files" and "pre-seed" directory contents as a tarball
 # in the artifacts directory:
-tar -cf projects_files.tar "${projects_files_dir}" "pre-seed"
+tar -cf projects_files.tar --exclude 'README*' "${projects_files_dir}" "pre-seed"
 
 # Expose the offline cache directory listing in the artifacts
 # directory (used to verify bundled JavaScript dependencies):
