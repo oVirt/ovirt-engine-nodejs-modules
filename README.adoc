@@ -65,23 +65,4 @@ As for packaging related changes, simply bump the `Release` number.
 If you need dependencies to exist in ovirt-engine-nodejs-modules, but
 your package.json and yarn.lock files are not yet committed, you can
 pre-seed ovirt-engine-nodejs-modules with your files to avoid a
-chicken and egg problem.
-
-Add a subdirectory in the pre-seed directory, and in that subdirectory
-add copies of the package.json and yarn.lock your new project or patch
-is using.
-
-The name of the subdirectory needs to be "<project>_<pr>" or
-"<project>_<changeid>". The github PR or gerrit ChangeId needs to be
-valid and open. This is checked by automation/check.sh. Pre-seeds for
-merged or abandoned patches must be removed from pre-seed directory.
-
-For example:
- - pre-seed/cockpit-ovirt_I42c223e8bc7c9087c29370e6db8524ab21d51c36/package.json
- - pre-seed/cockpit-ovirt_I42c223e8bc7c9087c29370e6db8524ab21d51c36/yarn.lock
- - pre-seed/example-project_42/package.json
- - pre-seed/example-project_42/yarn.lock
-
-After committing a patch that adds a pre-seed, the newly built version
-of ovirt-engine-nodejs-modules will now be pre-seeded with your
-new package.json + yarn.lock requirements.
+chicken and egg problem.  See link:pre-seed/README.adoc for details.
