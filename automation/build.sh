@@ -7,9 +7,6 @@ rm -rf "${artifacts_dir}" && mkdir -p "${artifacts_dir}"
 # Make sure we remember to update the version and/or release:
 ./automation/check-version-release.sh
 
-# Node.js is provided by the "ovirt-engine-nodejs" package:
-# not needed on fc30/el8, remove when dropping fc29&el7
-PATH="/usr/share/ovirt-engine-nodejs/bin:${PATH}"
 which node
 node --version
 
