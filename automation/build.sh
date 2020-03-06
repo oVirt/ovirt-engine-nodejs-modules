@@ -11,12 +11,12 @@ which node
 node --version
 
 # Point to "our" Yarn (and since the js has an initial hashbang, it can run itself)
-YARN=$(find "${PWD}" -maxdepth 1 -name 'yarn-*.js')
+export YARN=$(find "${PWD}" -maxdepth 1 -name 'yarn-*.js')
 chmod +x "$YARN"
 yarn () {
     "$YARN" $*
 }
-export yarn
+export -f yarn
 yarn --version
 
 # Create the "projects_files" directory to collect all project
@@ -29,6 +29,13 @@ rm -rf "${projects_files_dir}" && mkdir -p "${projects_files_dir}"
 # local "yarn-offline-cache" directory:
 yarn_offline_cache_dir="yarn-offline-cache"
 yarn config set yarn-offline-mirror "${PWD}/${yarn_offline_cache_dir}"
+
+# Since wget and yarn respect the normal http_proxy, https_proxy and no_proxy
+# env vars, make sure we don't use any proxy on this domains we query
+export no_proxy=localhost,127.0.0.1,registry.yarnpkg.com,gerrit.ovirt.org,raw.githubusercontent.com
+
+# Make yarn network requests more forgiving
+yarn config set network-timeout 90000
 
 # Clean up the offline cache directory:
 rm -rf "${yarn_offline_cache_dir}"
@@ -49,65 +56,13 @@ if [[ -d "${nodejs_modules_cache}" ]]; then
     echo "Prefilled the offline cache from $(rpm -q ovirt-engine-nodejs-modules)"
 fi
 
-GITHUB='githubusercontent.*/.+?/(.+?)/(.+?)/\{FILE\}'
-GERRIT='gerrit.*p=(.+?).git.*hb=(refs/heads/)?(.*)$'
-# The "projects.list" file contains URLs, each one referencing
-# a "package.json" file and the associated "yarn.lock" file for
-# the given project.
-# When reading the "projects.list" file, make sure to remove
-# blank lines as well as lines starting with the "#" character:
-sed -e '/^[ \t]*$/d' -e '/^#/d' projects.list | while read -r line; do
+# Download/install yarn dependencies merged to the projects
+PROJECT_FILES="${projects_files_dir}" ./automation/_build-install-projects.sh
 
-    # Clean up intermediate files:
-    rm -rf "package.json" "yarn.lock" "node_modules"
+# Download/install yarn dependencies on unmerged patches/PRs
+PROJECT_FILES="${projects_files_dir}" ./automation/_build-install-pre-seeds.sh
 
-    # Resolve file URLs, substituting the "{FILE}" placeholder
-    # with specific file name:
-    package_json_url="${line/\{FILE\}/package.json}"
-    yarn_lock_url="${line/\{FILE\}/yarn.lock}"
-
-    # Download the "package.json" file:
-    wget -O "package.json" "${package_json_url}"
-
-    # Download the "yarn.lock" file:
-    wget -O "yarn.lock" "${yarn_lock_url}"
-
-    # Copy downloaded files into the "projects_files" directory,
-    # use the "backup" argument to prevent over-writing the file
-    # if it exists:
-    DIR=''
-    [[ $line =~ $GITHUB ]] && DIR=${BASH_REMATCH[1]}_${BASH_REMATCH[2]}
-    [[ $line =~ $GERRIT ]] && DIR=${BASH_REMATCH[1]}_${BASH_REMATCH[3]/HEAD/master}
-    [[ $DIR != '' ]] && mkdir "${projects_files_dir}/$DIR"
-    cp --backup=t package.json yarn.lock "${projects_files_dir}/$DIR"
-
-    # Download JavaScript dependencies using Yarn, this will
-    # populate the "node_modules" directory as well as update
-    # the offline cache directory:
-    yarn install --pure-lockfile  --har
-
-done
-
-# The "pre-seed" directory contains subdirectories each containing
-# a "package.json" file and the associated "yarn.lock" file for
-# the given pre-seed.
-find pre-seed -mindepth 1 -maxdepth 1 -type d | while read -r dname; do
-
-    # Clean up intermediate files:
-    rm -rf "package.json" "yarn.lock" "node_modules"
-
-    echo "$dname"
-    ls -la "$dname"
-    cp "$dname/package.json" .
-    cp "$dname/yarn.lock" .
-
-    # Download JavaScript dependencies using Yarn, this will
-    # populate the "node_modules" directory as well as update
-    # the offline cache directory:
-    yarn install --pure-lockfile --har
-
-done
-
+# Clean up intermediate files
 rm -rf "package.json" "yarn.lock" "node_modules"
 
 #
@@ -115,7 +70,8 @@ rm -rf "package.json" "yarn.lock" "node_modules"
 #
 echo "yarn install count: $(ls -1 *.har | wc -l)" | tee yarn_network_stats.txt
 echo "yarn request count: $(jq -s '[.[].log.entries | length] | add' *.har)" | tee -a yarn_network_stats.txt
-echo "yarn fetches for packages not included in offline pre-fill:" $(jq '.log.entries[].request.url as $url | select($url | contains("registry")) | $url' *.har | sort) | tee -a yarn_network_stats.txt
+echo "yarn fetches for packages not included in offline pre-fill:" | tee -a yarn_network_stats.txt
+jq '.log.entries[].request.url as $url | select($url | contains("registry")) | $url' *.har | sort | tee -a yarn_network_stats.txt
 rm *.har
 
 # Remove offline cache modules that are no longer being used
@@ -126,7 +82,7 @@ GLOBAL_CACHE="${yarn_global_cache_dir}" ./automation/_build-licenses.sh
 
 # Expose the "projects_files" and "pre-seed" directory contents as a tarball
 # in the artifacts directory:
-tar -cf projects_files.tar --exclude 'README*' "${projects_files_dir}" "pre-seed"
+tar -cf projects_files.tar "${projects_files_dir}"
 
 # Expose the offline cache directory listing in the artifacts
 # directory (used to verify bundled JavaScript dependencies):
