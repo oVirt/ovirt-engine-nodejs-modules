@@ -3,7 +3,22 @@
 # Make sure we remember to update the version and/or release:
 ./automation/check-version-release.sh
 
+# Make sure we only have 1 instance of yarn
 [[ $(ls -1 yarn-*.js | wc -l) -ne 1 ]] && { echo "Error: multiple yarn binaries present"; exit 5; }
+
+# Make sure the rpmspec file is valid (speficically that the changelog dates won't kill the build)
+SPECINFO=$(
+    rpmbuild \
+        --nobuild \
+        --define="_offline_cache_tar yarn-offline-cache.tar}" \
+        "ovirt-engine-nodejs-modules.spec" \
+    2>&1
+) || :
+if [[ -n "$SPECINFO" ]]; then
+    echo "Error or warning in 'ovirt-engine-nodejs-modules.spec':"
+    echo "$SPECINFO"
+    exit 6
+fi
 
 # The following loop is taken from "build.sh" - the goal is to validate
 # that all project specific files specified in the "projects.list" file
