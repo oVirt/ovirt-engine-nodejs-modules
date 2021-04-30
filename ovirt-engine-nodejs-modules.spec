@@ -1,5 +1,5 @@
 Name: ovirt-engine-nodejs-modules
-Version: 2.0.44
+Version: 2.0.45
 Release: 1%{?dist}
 Summary: Node.js modules required to build oVirt JavaScript applications
 Group: Virtualization/Management
@@ -42,6 +42,14 @@ install -m 755 %{_yarn} %{dest}/bin/yarn
 %{_datadir}/%{name}
 
 %changelog
+* Fri Apr 30 2021 Scott J Dickerson <sdickers@redhat.com> - 2.0.45-1
+  Add pre-seed for change:
+    - https://gerrit.ovirt.org/c/cockpit-ovirt/+/114580
+
+  Remove pre-seeds for merged/closed changes:
+    - https://gerrit.ovirt.org/c/cockpit-ovirt/+/114255
+    - https://github.com/oVirt/ovirt-web-ui/pull/1413
+
 * Fri Apr 23 2021 Sharon Gratch <sgratch@redhat.com> - 2.0.44-1
   Add pre-seed for change:
     - https://github.com/oVirt/ovirt-web-ui/pull/1413
@@ -52,13 +60,13 @@ install -m 755 %{_yarn} %{dest}/bin/yarn
   Remove pre-seed for merged changes:
   - https://github.com/oVirt/ovirt-web-ui/pull/1384
 
-* Fri Apr 9 2021 Radoslaw Szwajkowski <rszwajko@redhat.com> - 2.0.42-1 
+* Fri Apr 9 2021 Radoslaw Szwajkowski <rszwajko@redhat.com> - 2.0.42-1
   Add pre-seed for change:
   - https://github.com/oVirt/ovirt-web-ui/pull/1384
   Remove pre-seed for merged changes:
   - https://github.com/oVirt/ovirt-web-ui/pull/1383
 
-* Mon Mar 22 2021 Radoslaw Szwajkowski <rszwajko@redhat.com> - 2.0.41-1 
+* Mon Mar 22 2021 Radoslaw Szwajkowski <rszwajko@redhat.com> - 2.0.41-1
   Add pre-seed for change:
   - https://github.com/oVirt/ovirt-web-ui/pull/1383
   Remove pre-seed for merged changes:
