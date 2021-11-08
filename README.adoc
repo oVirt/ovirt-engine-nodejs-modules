@@ -1,5 +1,7 @@
 = ovirt-engine-nodejs-modules
 
+image:https://copr.fedorainfracloud.org/coprs/ovirt/ovirt-master-snapshot/package/ovirt-engine-nodejs-modules/status_image/last_build.png[link="https://copr.fedorainfracloud.org/coprs/ovirt/ovirt-master-snapshot/package/ovirt-engine-nodejs-modules/"]
+
 == Summary
 
 This package contains the dependencies needed to build oVirt JavaScript

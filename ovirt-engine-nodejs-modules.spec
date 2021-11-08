@@ -1,11 +1,11 @@
 Name: ovirt-engine-nodejs-modules
-Version: 2.1.0
+Version: 2.1.1
 Release: 1%{?dist}
 Summary: Node.js modules required to build oVirt JavaScript applications
 Group: Virtualization/Management
 License: Multiple
 URL: http://ovirt.org
-Source0: %{_offline_cache_tar}
+Source0: yarn-offline-cache.tar
 Source1: sources.tar
 
 BuildArch: noarch
@@ -34,7 +34,7 @@ install -m 755 setup-env.sh %{dest}
 install -m 644 projects_files.tar %{dest}
 
 # install yarn-X.Y.Z.js in bin/ as normal executable
-install -m 755 %{_yarn} %{dest}/bin/yarn
+install -m 755 `find . -maxdepth 1 -name 'yarn-*.js' -exec basename {} \;` %{dest}/bin/yarn
 
 %files
 %license LICENSES
@@ -42,6 +42,9 @@ install -m 755 %{_yarn} %{dest}/bin/yarn
 %{_datadir}/%{name}
 
 %changelog
+* Fri Nov 12 2021 Sandro Bonazzola <sbonazzo@redhat.com> - 2.1.1-1
+  - Enable COPR builds
+
 * Fri Nov 12 2021 Scott J Dickerson <sdickers@redhat.com> - 2.1.0-1
   Require nodejs 14 (some build packages won't run on nodejs<12)
   Upgrade to yarn 1.2.11

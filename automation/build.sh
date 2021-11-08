@@ -89,7 +89,7 @@ tar -cf projects_files.tar "${projects_files_dir}"
 ls -1 "${yarn_offline_cache_dir}" > yarn_offline_cache.list
 
 # Pack the source tarballs
-yarn_offline_cache_tar="${yarn_offline_cache_dir}.tar"
+yarn_offline_cache_tar="yarn-offline-cache.tar"
 tar --dereference -cf "${yarn_offline_cache_tar}" "${yarn_offline_cache_dir}"
 
 tar cf sources.tar \
@@ -107,12 +107,21 @@ mv projects_files.tar \
     yarn_offline_cache.list \
     "${artifacts_dir}"
 
-# Build the source and binary packages:
-rpmbuild \
-    -ba \
-    --define="_offline_cache_tar ${yarn_offline_cache_tar}" \
-    --define="_yarn $(basename ${YARN})" \
-    --define="_sourcedir ${PWD}" \
-    --define="_srcrpmdir ${artifacts_dir}" \
-    --define="_rpmdir ${artifacts_dir}" \
-    "ovirt-engine-nodejs-modules.spec"
+
+if [[ "${1:-foo}" == "copr" ]] ; then
+    # Build the source package:
+    rpmbuild \
+        -bs \
+        --define="_sourcedir ${PWD}" \
+        --define="_srcrpmdir ${artifacts_dir}" \
+        --define="_rpmdir ${artifacts_dir}" \
+        "ovirt-engine-nodejs-modules.spec"
+else
+    # Build the source and binary packages:
+    rpmbuild \
+        -ba \
+        --define="_sourcedir ${PWD}" \
+        --define="_srcrpmdir ${artifacts_dir}" \
+        --define="_rpmdir ${artifacts_dir}" \
+        "ovirt-engine-nodejs-modules.spec"
+fi
