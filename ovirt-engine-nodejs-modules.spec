@@ -1,17 +1,17 @@
 Name: ovirt-engine-nodejs-modules
-Version: 2.0.60
+Version: 2.1.0
 Release: 1%{?dist}
 Summary: Node.js modules required to build oVirt JavaScript applications
 Group: Virtualization/Management
 License: Multiple
 URL: http://ovirt.org
-Source0: %{?_offline_cache_tar}
+Source0: %{_offline_cache_tar}
 Source1: sources.tar
 
 BuildArch: noarch
 
-BuildRequires: nodejs
-Requires: nodejs
+BuildRequires: nodejs >= 14.15.0
+Requires: nodejs >= 14.15.0
 
 %description
 Node.js modules required to build oVirt JavaScript applications.
@@ -42,6 +42,10 @@ install -m 755 %{_yarn} %{dest}/bin/yarn
 %{_datadir}/%{name}
 
 %changelog
+* Fri Nov 12 2021 Scott J Dickerson <sdickers@redhat.com> - 2.1.0-1
+  Require nodejs 14 (some build packages won't run on nodejs<12)
+  Upgrade to yarn 1.2.11
+
 * Sun Oct 10 2021 Sharon Gratch <sgratch@redhat.com> - 2.0.60-1
   Add pre-seed for changes:
     - https://github.com/oVirt/ovirt-web-ui/pull/1526

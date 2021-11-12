@@ -7,9 +7,6 @@
 
 echo 'Setting up environment using @NVR@'
 
-# Node.js is provided by the "ovirt-engine-nodejs" package:
-export PATH="/usr/share/ovirt-engine-nodejs/bin:${PATH}"
-
 # yarn is provided by us
 export PATH="/usr/share/ovirt-engine-nodejs-modules/bin:${PATH}"
 
