@@ -1,0 +1,26 @@
+name: test the patch
+on:
+  pull_request:
+
+jobs:
+  test_el8:
+    name: Check the PR
+    runs-on: ubuntu-latest
+    container:
+      image: quay.io/centos/centos:stream8
+
+    steps:
+      - name: enable repos and choose module versions
+        run: |
+          dnf -y copr enable ovirt/ovirt-master-snapshot centos-stream-8
+          dnf -y module enable nodejs:14
+
+      - name: install check.sh required packages
+        run: |
+          dnf -y install git jq wget rpmlint nodejs
+
+      - name: checkout sources
+        uses: actions/checkout@v2
+
+      - name: run automation/check.sh
+        run: ./automation/check.sh
