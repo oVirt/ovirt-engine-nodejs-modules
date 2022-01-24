@@ -16,15 +16,10 @@
 # See the README file for more details.
 
 # oVirt UI Extensions
-https://gerrit.ovirt.org/gitweb?p=ovirt-engine-ui-extensions.git;a=blob_plain;f={FILE};hb=HEAD
+https://raw.githubusercontent.com/oVirt/ovirt-engine-ui-extensions/master/{FILE}
 
 # ovirt-web-ui
 https://raw.githubusercontent.com/oVirt/ovirt-web-ui/master/{FILE}
 
 # cockpit-ovirt
-https://gerrit.ovirt.org/gitweb?p=cockpit-ovirt.git;a=blob_plain;f=dashboard/{FILE};hb=HEAD
-https://gerrit.ovirt.org/gitweb?p=cockpit-ovirt.git;a=blob_plain;f=dashboard/{FILE};hb=ovirt-4.3
-
-## NOTE: As of 23-Oct-20, the project has been obsoleted
-# ovirt-engine-api-explorer
-https://gerrit.ovirt.org/gitweb?p=ovirt-engine-api-explorer.git;a=blob_plain;f={FILE};hb=HEAD
+https://raw.githubusercontent.com/oVirt/cockpit-ovirt/master/dashboard/{FILE}

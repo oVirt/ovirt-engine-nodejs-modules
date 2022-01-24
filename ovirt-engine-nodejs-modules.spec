@@ -1,5 +1,5 @@
 Name: ovirt-engine-nodejs-modules
-Version: 2.1.4
+Version: 2.1.5
 Release: 1%{?dist}
 Summary: Node.js modules required to build oVirt JavaScript applications
 Group: Virtualization/Management
@@ -42,6 +42,11 @@ install -m 755 `find . -maxdepth 1 -name 'yarn-*.js' -exec basename {} \;` %{des
 %{_datadir}/%{name}
 
 %changelog
+* Mon Jan 24 2022 Scott J Dickerson <sdickers@redhat.com> - 2.1.5-1
+  - Move all project fetch URLs to github
+  - Remove project 'ovirt-engine-api-explorer' since it has been deprecated for
+    over a year
+
 * Mon Dec 13 2021 Scott J Dickerson <sdickers@redhat.com> - 2.1.4-1
   Enable GitHub Actions for CI
   Remove stale pre-seeds
