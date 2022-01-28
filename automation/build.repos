@@ -1,5 +1,0 @@
-# for ovirt-engine-nodejs-modules for cache prefill
-ovirt-tested,https://resources.ovirt.org/repos/ovirt/tested/master/rpm/$distro/
-
-# include the jenkins repo in case the tested repo doesn't have the built rpm
-ovirt-engine-nodejs-modules_master,https://jenkins.ovirt.org/job/ovirt-engine-nodejs-modules_standard-on-merge/lastSuccessfulBuild/artifact/build-artifacts.$distro.x86_64
