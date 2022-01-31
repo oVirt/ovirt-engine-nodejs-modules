@@ -1,0 +1,71 @@
+name: comment '/build rpm' to build a PR (the copr way)
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  build_el8:
+    name: build the rpm repo
+    if: |
+      github.event.issue.pull_request &&
+      startsWith(github.event.comment.body, '/build rpm') &&
+      (
+        github.event.comment.author_association == 'MEMBER' ||
+        github.event.comment.author_association == 'COLLABORATOR' ||
+        github.event.comment.author_association == 'OWNER'
+      )
+
+    runs-on: ubuntu-latest
+    container:
+      image: quay.io/ovirt/buildcontainer:el8stream
+
+    env:
+      CHECK_VERSION: no
+      PR_NUMBER: ${{ github.event.issue.number }}
+
+    steps:
+      - name: make sure the action and build.sh required packages are installed
+        run: |
+          dnf -y config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo
+          dnf -y install gh
+          dnf -y install git jq wget rpmlint rpm-build nodejs ovirt-engine-nodejs-modules
+
+      - name: checkout the repo
+        uses: actions/checkout@v2
+
+      - name: checkout the PR
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr checkout --repo ${GITHUB_REPOSITORY} ${PR_NUMBER}
+
+      - name: build src.rpm
+        run: ./automation/build.sh copr
+
+      - name: install build dependencies from src.rpm
+        run: |
+          dnf -y builddep exported-artifacts/ovirt-engine-nodejs-modules*.src.rpm
+
+      - name: Build rpm directly from src.rpm
+        run: |
+          rpmbuild \
+            --define="_rpmdir `pwd`/exported-artifacts" \
+            --rebuild exported-artifacts/ovirt-engine-nodejs-modules*.src.rpm
+
+      - name: upload artifacts
+        uses: ovirt/upload-rpms-action@v2
+        with:
+          directory: exported-artifacts/
+
+      - name: add success comment with a link to the action's run
+        if: success()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          LINK=$( \
+            gh api -X GET \
+              repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID} \
+              -q '"[action run summary]("+ .html_url +")"' \
+          )
+          echo ":heavy_check_mark: Build success! See the results and artifacts at $LINK." \
+            | gh pr comment --repo ${GITHUB_REPOSITORY} -F - ${PR_NUMBER}
