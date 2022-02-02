@@ -1,6 +1,6 @@
 Name: ovirt-engine-nodejs-modules
 Version: 2.2.0
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Node.js modules required to build oVirt JavaScript applications
 Group: Virtualization/Management
 License: Multiple
@@ -10,7 +10,14 @@ Source1: sources.tar
 
 BuildArch: noarch
 
+# requirements for automation/check.sh and automation/build.sh (to be included in the build container)
+BuildRequires: git
+BuildRequires: jq
+BuildRequires: wget
+BuildRequires: rpmlint
+BuildRequires: rpm-build
 BuildRequires: nodejs >= 14.15.0
+
 Requires: nodejs >= 14.15.0
 
 %description
@@ -42,6 +49,9 @@ install -m 755 `find . -maxdepth 1 -name 'yarn-*.js' -exec basename {} \;` %{des
 %{_datadir}/%{name}
 
 %changelog
+* Thu Feb 3 2022 Scott J Dickerson <sdickers@redhat.com> - 2.2.0-3
+  - Add BuildRequires for running automation/*.sh scripts in ovirt's build container
+
 * Wed Feb 2 2022 Scott J Dickerson <sdickers@redhat.com> - 2.2.0-2
   - Remove deprecated std-ci/jenkins automations
 
