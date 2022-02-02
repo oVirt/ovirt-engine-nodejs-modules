@@ -1,6 +1,6 @@
 Name: ovirt-engine-nodejs-modules
 Version: 2.2.0
-Release: 3%{?dist}
+Release: 4%{?dist}
 Summary: Node.js modules required to build oVirt JavaScript applications
 Group: Virtualization/Management
 License: Multiple
@@ -49,6 +49,10 @@ install -m 755 `find . -maxdepth 1 -name 'yarn-*.js' -exec basename {} \;` %{des
 %{_datadir}/%{name}
 
 %changelog
+* Thu Feb 3 2022 Scott J Dickerson <sdickers@redhat.com> - 2.2.0-4
+  - Use quay.io/ovirt/buildcontainer:el8stream for github action builds
+  - Add a manual run github action to create RPMs for a PR
+
 * Thu Feb 3 2022 Scott J Dickerson <sdickers@redhat.com> - 2.2.0-3
   - Add BuildRequires for running automation/*.sh scripts in ovirt's build container
 
