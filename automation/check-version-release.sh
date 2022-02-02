@@ -1,6 +1,6 @@
 #!/bin/bash -ex
 
-if ! git show $1 -- *.spec | \
+if ! git show ${CHECK_RANGE:-HEAD} -- *.spec | \
     grep '^+\(Version:\|Release:\)'
 then
     echo "Package version or release must be updated"

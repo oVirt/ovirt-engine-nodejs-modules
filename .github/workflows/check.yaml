@@ -5,17 +5,20 @@ on:
 jobs:
   test_el8:
     name: run check.sh to verify content
+
     runs-on: ubuntu-latest
     container:
-      image: quay.io/centos/centos:stream8
+      image: quay.io/ovirt/buildcontainer:el8stream
+
+    env:
+      # The check version script needs to know the PR base and head commits to be able to
+      # look at the contents of the range of commits for the PR. The required spec file
+      # change must be contained somewhere in one of those commits!  This env var will
+      # be picked up by the script and used as the range.
+      CHECK_RANGE: ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}
 
     steps:
-      - name: enable repos and choose module versions
-        run: |
-          dnf -y copr enable ovirt/ovirt-master-snapshot centos-stream-8
-          dnf -y module enable nodejs:14
-
-      - name: install check.sh required packages
+      - name: make sure check.sh required packages are installed
         run: |
           dnf -y install git jq wget rpmlint
 
@@ -26,9 +29,6 @@ jobs:
           fetch-depth: 20
           ref: ${{ github.event.pull_request.head.sha }}
 
-      # The script needs to know the PR base and head commits to be able to look at the
-      # contents of the range of commits for the PR. The required spec file must be updated
-      # somewhere in one of those commits!
       - name: run automation/check.sh
         run: |
-          ./automation/check.sh ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}
+          ./automation/check.sh
