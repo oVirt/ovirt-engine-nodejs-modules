@@ -4,8 +4,10 @@
 artifacts_dir="${PWD}/exported-artifacts"
 rm -rf "${artifacts_dir}" && mkdir -p "${artifacts_dir}"
 
-# Make sure we remember to update the version and/or release:
-./automation/check-version-release.sh
+# If the build should check commits for version updates (e.g. if building a PR branch):
+if [[ "${CHECK_VERSION:-no}" == "yes" ]] ; then
+    ./automation/check-version-release.sh
+fi
 
 which node
 node --version

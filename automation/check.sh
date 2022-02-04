@@ -1,11 +1,7 @@
 #!/bin/bash -e
 
 # Make sure we remember to update the version and/or release:
-if [[ "${1}" == "" ]] ; then
-    ./automation/check-version-release.sh HEAD
-else
-    ./automation/check-version-release.sh $1
-fi
+./automation/check-version-release.sh
 
 # Make sure we only have 1 instance of yarn
 [[ $(ls -1 yarn-*.js | wc -l) -ne 1 ]] && { echo "Error: multiple yarn binaries present"; exit 5; }
