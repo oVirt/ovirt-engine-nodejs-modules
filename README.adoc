@@ -5,51 +5,50 @@ image:https://copr.fedorainfracloud.org/coprs/ovirt/ovirt-master-snapshot/packag
 == Summary
 
 This package contains the dependencies needed to build oVirt JavaScript
-applications.
+applications.  By using this package, a project can use nodejs dependencies
+and build without downloading packages.
 
 == Usage
 
-Modify your build script and/or CI job configuration to ensure following
-packages are installed when building your project:
+Modify your build script and/or CI job configuration to ensure this
+packages is installed when building your project:
 
-* `ovirt-engine-nodejs` or `nodejs` on Fedora 30 / EL 8
 * `ovirt-engine-nodejs-modules`
 
-It's highly recommended to specify an explicit `Version-Release` when
-requiring the `ovirt-engine-nodejs-modules` package in your project.
+It's highly recommended to specify an explicit version and release when
+requiring the `ovirt-engine-nodejs-modules` package in your project.  For
+example, in your `rpm.spec` file:
 
-For example, in your `automation/build-artifacts.packages` file:
+  BuildRequires: ovirt-engine-nodejs-modules >= 2.1.6-1
 
-  ovirt-engine-nodejs-modules-1.2.3
+Note that `ovirt-engine-nodejs-modules` requires `nodejs` and takes care of
+installing the `yarn` package manager.
 
-Note that `ovirt-engine-nodejs-modules` takes care of installing Yarn
-package manager, which is used to populate the project's `node_modules`
-directory.
+== Build script
 
-=== Build script
+In your build script, source `setup-env.sh` to set up the Node.js environment
+and run `yarn install` to populate the `./node_modules` directory:
 
-In your build script, source `setup-env.sh` to set up Node.js environment
-and populate the `./node_modules` directory:
-
- cd /path/to/your/project
- source /usr/share/ovirt-engine-nodejs-modules/setup-env.sh
+  cd /path/to/your/project
+  source /usr/share/ovirt-engine-nodejs-modules/setup-env.sh
 
 The setup script runs `yarn install` in offline mode, using JavaScript
 package sources located at:
 
- /usr/share/ovirt-engine-nodejs-modules/yarn-offline-cache
+  /usr/share/ovirt-engine-nodejs-modules/yarn-offline-cache
 
-If the above mentioned command fails, it means that you need to rebuild
-the `ovirt-engine-nodejs-modules` RPM so that its offline cache directory
-contains all dependencies currently required by your project.
+If the `setup-env.sh` command fails, it usually means that you need to add a
+link:pre-seed/README.adoc[pre-seed] to or rebuild the `ovirt-engine-nodejs-modules`
+RPM so its offline cache directory will be updated to contains all dependencies currently
+required by your project.
 
-== JavaScript dependency management
+== Using this package in a project
 
 Simply modify the `projects.list` file, adding URL(s) referencing your
 project's `package.json` file and the associated `yarn.lock` file.
 
-Both `package.json` and `yarn.lock` are mandatory. The build will fail
-if any of those files are not available.
+Both `package.json` and `yarn.lock` are mandatory in the target project. The build
+will fail if any of those files are not available.
 
 == Package versioning
 
@@ -57,14 +56,15 @@ When changing the `projects.list` file, bump `.y` in `Version` and reset
 the `Release` number.
 
 When rebuilding the package to reflect changes in the consuming projects
-(the ones listed in the `projects.list` file), bump `.z` in `Version`
-and reset the `Release` number.
+(the ones listed in the `projects.list` file), or when adding a pre-seed,
+bump `.z` in `Version` and reset the `Release` number.
 
-As for packaging related changes, simply bump the `Release` number.
+For packaging related changes, simply bump the `Release` number.
 
 == Pre-seed
 
-If you need dependencies to exist in ovirt-engine-nodejs-modules, but
-your package.json and yarn.lock files are not yet committed, you can
-pre-seed ovirt-engine-nodejs-modules with your files to avoid a
-chicken and egg problem.  See link:pre-seed/README.adoc for details.
+If you need dependencies to build a patch or pull request where changes to
+`package.json` or `yarn.lock` are not yet merged, you can add a manual pre-seed.
+The avoids a chicken and egg problem.
+
+See link:pre-seed/README.adoc[pre-seed README] for details.
