@@ -45,10 +45,14 @@ while read -r dname; do
         fi
     elif [[ "${pr:0:1}" =~ ^[0-9] ]]; then
         echo "  github PR: $pr"
-        state=$(wget -qO - https://api.github.com/repos/oVirt/ovirt-web-ui/pulls/${pr} | jq -r .state)
-        if [[ ! "$state" = "open" ]]; then
-            # echo "  Error: You need to fix ${dname}. Invalid state of ${pr}: ${state}"
-            Errors+=("Please fix ${dname}, invalid state of ${pr}: ${state}")
+        ghProject=$(echo ${dname} | cut -d/ -f5)
+        state=$(wget -qO - "https://api.github.com/repos/oVirt/${ghProject}/pulls/${pr}" | jq -r .state)
+
+        if [[ "$ghProject" = "ovirt-web-ui" || "$ghProject" = "ovirt-engine-ui-extensions" ]]; then
+            if [[ ! "$state" = "open" ]]; then
+                # echo "  Error: You need to fix ${dname}. Invalid state of ${pr}: ${state}"
+                Errors+=("Please fix ${dname}, invalid state of ${pr}: ${state}")
+            fi
         fi
     else
         echo "Invalid pre-seed directory ${dname}"
