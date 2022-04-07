@@ -14,14 +14,11 @@ export PATH="/usr/share/ovirt-engine-nodejs-modules/bin:${PATH}"
 # the "ovirt-engine-nodejs-modules" package:
 yarn config set yarn-offline-mirror "/usr/share/ovirt-engine-nodejs-modules/yarn-offline-cache"
 
-# Populate the "./node_modules" directory using Yarn:
-yarn install --offline --pure-lockfile
-
-# Verify that dependency versions (semantic version ranges)
+# Populate the "./node_modules" directory using Yarn and
+# verify that dependency versions (semantic version ranges)
 # in the "package.json" file have matching resolutions in
 # the "yarn.lock" file:
-# Let's ignore errors because the command is buggy anyway (https://classic.yarnpkg.com/en/docs/cli/check/)
-yarn check || /bin/true
+yarn install --offline --pure-lockfile --check-files
 
 # JavaScript modules put their executables (if any) into
 # the "./node_modules/.bin" directory, make sure it's on
