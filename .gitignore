@@ -1,11 +1,13 @@
 node_modules/
 .vscode/
 
-# created by build.sh
+# created by check.sh or build.sh
 sources.tar
 yarn-install*.har
 .wget-hsts
+_working_/
 projects_files/
+projects_files.tar
 yarn-global-cache/
 yarn-offline-cache/
 yarn-offline-cache.tar

@@ -30,5 +30,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
 
       - name: run automation/check.sh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           ./automation/check.sh

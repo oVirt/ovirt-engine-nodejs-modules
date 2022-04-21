@@ -1,14 +1,6 @@
 #!/bin/bash -ex
 
-# Make sure the artifacts directory is empty:
-artifacts_dir="${PWD}/exported-artifacts"
-rm -rf "${artifacts_dir}" && mkdir -p "${artifacts_dir}"
-
-# If the build should check commits for version updates (e.g. if building a PR branch):
-if [[ "${CHECK_VERSION:-no}" == "yes" ]] ; then
-    ./automation/check-version-release.sh
-fi
-
+# Log which node and version we're using
 which node
 node --version
 
@@ -33,8 +25,8 @@ yarn_offline_cache_dir="yarn-offline-cache"
 yarn config set yarn-offline-mirror "${PWD}/${yarn_offline_cache_dir}"
 
 # Since wget and yarn respect the normal http_proxy, https_proxy and no_proxy
-# env vars, make sure we don't use any proxy on this domains we query
-export no_proxy=localhost,127.0.0.1,registry.yarnpkg.com,gerrit.ovirt.org,raw.githubusercontent.com
+# env vars, make sure we don't use any proxy on the domains we query
+export no_proxy=localhost,127.0.0.1,registry.yarnpkg.com,gerrit.ovirt.org,github.com
 
 # Make yarn network requests more forgiving
 yarn config set network-timeout 90000
@@ -46,7 +38,6 @@ rm -rf "${yarn_offline_cache_dir}"
 # actual cache, not to confuse with the "offline mirror" feature):
 yarn_global_cache_dir="yarn-global-cache"
 yarn config set cache-folder "${PWD}/${yarn_global_cache_dir}"
-yarn_global_cache_path="$(yarn cache dir)"
 
 # Clean up the global cache directory:
 rm -rf "${yarn_global_cache_dir}"
@@ -58,14 +49,14 @@ if [[ -d "${nodejs_modules_cache}" ]]; then
     echo "Prefilled the offline cache from $(rpm -q ovirt-engine-nodejs-modules)"
 fi
 
-# Download/install yarn dependencies merged to the projects
-PROJECT_FILES="${projects_files_dir}" ./automation/_build-install-projects.sh
+# Setup node_modules for automation/nodejs, retain har file
+pushd ./automation/nodejs; rm -rf node_modules; yarn --har install; popd; mv ./automation/nodejs/*.har .
 
-# Download/install yarn dependencies on unmerged patches/PRs
-PROJECT_FILES="${projects_files_dir}" ./automation/_build-install-pre-seeds.sh
+# Fetch and verify the projects and pre-seeds
+PROJECTS_FILES="${projects_files_dir}" ./automation/_build-setup-verify.sh
 
-# Clean up intermediate files
-rm -rf "package.json" "yarn.lock" "node_modules"
+# Download/install yarn dependencies from the fetched and verified projects and pre-seeds
+PROJECTS_FILES="${projects_files_dir}" ./automation/_build-yarn-install.sh
 
 #
 # Report some yarn request statistics
@@ -82,8 +73,7 @@ GLOBAL_CACHE="${yarn_global_cache_dir}" OFFLINE_CACHE="${yarn_offline_cache_dir}
 # Build the "LICENSES" file, one entry per package cached by this module
 GLOBAL_CACHE="${yarn_global_cache_dir}" ./automation/_build-licenses.sh
 
-# Expose the "projects_files" and "pre-seed" directory contents as a tarball
-# in the artifacts directory:
+# Expose the "projects_files" directory contents as a tarball in the artifacts directory:
 tar -cf projects_files.tar "${projects_files_dir}"
 
 # Expose the offline cache directory listing in the artifacts
@@ -91,39 +81,45 @@ tar -cf projects_files.tar "${projects_files_dir}"
 ls -1 "${yarn_offline_cache_dir}" > yarn_offline_cache.list
 
 # Pack the source tarballs
-yarn_offline_cache_tar="yarn-offline-cache.tar"
-tar --dereference -cf "${yarn_offline_cache_tar}" "${yarn_offline_cache_dir}"
+tar --dereference -cf yarn-offline-cache.tar "${yarn_offline_cache_dir}"
 
 tar cf sources.tar \
     setup-env.sh.in \
     yarn-*.js \
-    LICENSES \
+    LICENSE \
     LICENSE-yarn \
+    LICENSES \
     projects_files.tar \
     yarn_network_stats.txt \
     yarn_offline_cache.list
 
-# Collect artifacts
-mv projects_files.tar \
-    yarn_network_stats.txt \
-    yarn_offline_cache.list \
-    "${artifacts_dir}"
-
+# Make ready to build
+rm -rf rpmbuild/ && mkdir -p rpmbuild/{SPECS,RPMS,SRPMS,SOURCES}
+mv sources.tar yarn-offline-cache.tar rpmbuild/SOURCES
 
 if [[ "${1:-foo}" == "copr" ]] ; then
     # Build the source package:
     rpmbuild \
         -bs \
-        --define="_sourcedir ${PWD}" \
-        --define="_srcrpmdir ${artifacts_dir}" \
-        --define="_rpmdir ${artifacts_dir}" \
+        --define="_topdir ${PWD}/rpmbuild" \
         "ovirt-engine-nodejs-modules.spec"
 else
     # Build the source and binary packages:
     rpmbuild \
         -ba \
-        --define="_sourcedir ${PWD}" \
-        --define="_srcrpmdir ${artifacts_dir}" \
-        --define="_rpmdir ${artifacts_dir}" \
+        --define="_topdir ${PWD}/rpmbuild" \
         "ovirt-engine-nodejs-modules.spec"
 fi
+
+# Make sure the artifacts directory is empty:
+artifacts_dir="${PWD}/exported-artifacts"
+rm -rf "${artifacts_dir}" && mkdir -p "${artifacts_dir}"
+
+# Collect non rpm artifacts
+mv projects_files.tar \
+    yarn_network_stats.txt \
+    yarn_offline_cache.list \
+    "${artifacts_dir}"
+
+# Collect rpm artifacts
+find rpmbuild -name '*.rpm' -exec mv "{}" "${artifacts_dir}" \;
