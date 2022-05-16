@@ -53,7 +53,7 @@ fi
 pushd ./automation/nodejs; rm -rf node_modules; yarn --har install; popd; mv ./automation/nodejs/*.har .
 
 # Fetch and verify the projects and pre-seeds
-PROJECTS_FILES="${projects_files_dir}" ./automation/_build-setup-verify.sh
+PROJECTS_FILES="${projects_files_dir}" ./automation/_build-setup-verify.sh --ignoreWarnings
 
 # Download/install yarn dependencies from the fetched and verified projects and pre-seeds
 PROJECTS_FILES="${projects_files_dir}" ./automation/_build-yarn-install.sh

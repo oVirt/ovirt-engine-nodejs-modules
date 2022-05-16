@@ -13,6 +13,7 @@ console.log(`working root: ${chalk.green(lib.paths.working_root)}`)
 
 const results = {
   success: {},
+  warning: {},
   fail: {},
 }
 
@@ -41,7 +42,7 @@ for await (const [name, info] of Object.entries(lib.preseeds)) {
     console.error(chalk.red('could not access git clone url from github'))
     console.error(e)
     console.groupEnd()
-    results.fail[name] = e
+    results.warning[name] = e
     continue
   }
 
@@ -62,10 +63,10 @@ for await (const [name, info] of Object.entries(lib.preseeds)) {
       })
       console.log(`PR is ${chalk.green('good')} to use as a pre-seed`)
     } catch (e) {
-      console.error(`PR ${chalk.red('verification fail')}`)
+      console.error(`PR ${chalk.red('warning, verification fail')}`)
       console.error(e)
       console.groupEnd()
-      results.fail[prName] = e
+      results.warning[prName] = e
       continue
     }
 
@@ -114,6 +115,12 @@ for await (const [name, info] of Object.entries(lib.preseeds)) {
 console.log(`
 results:
   - success: ${chalk.green(Object.keys(results.success).length)}
+  - warning: ${chalk.yellow(Object.keys(results.warning).length)}
   - fail: ${chalk.red(Object.keys(results.fail).length)}
 `)
-process.exitCode = Object.keys(results.fail).length === 0 ? 0 : 1
+const hasWarnings = Object.keys(results.warning).length > 0
+const hasFails = Object.keys(results.fail).length > 0
+process.exitCode =
+  hasWarnings && !hasFails ? 1 :
+  hasFails ? 2 :
+  0
