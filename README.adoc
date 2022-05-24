@@ -38,68 +38,79 @@ package sources located at:
   /usr/share/ovirt-engine-nodejs-modules/yarn-offline-cache
 
 If the `setup-env.sh` command fails, it usually means that you need to add a
-link:pre-seed/README.adoc[pre-seed] to or rebuild the `ovirt-engine-nodejs-modules`
-RPM so its offline cache directory will be updated to contains all dependencies currently
-required by your project.
+<<pre-seed,pre-seed>> and rebuild the `ovirt-engine-nodejs-modules` RPM so
+the offline cache directory will be updated to contains all dependencies currently
+required by your project or pull request.
 
 == Using this package in a project
 
-Simply modify the `projects.list` file, adding URL(s) referencing your
-project's `package.json` file and the associated `yarn.lock` file.
+Simply modify the `projects.list.mjs` JavaScript file, adding the project's git information.
+The git repository will be fetched to access the project's `package.json` and `yarn.lock`
+file.
 
 Both `package.json` and `yarn.lock` are mandatory in the target project. The build
 will fail if any of those files are not available.
 
+For example, in the `projects` section of `projects.list.mjs`, the following block
+references a git repo, branch (any commitish will work) and folder to be included in
+the package:
+
+```js
+    'ovirt-web-ui': {
+      git_url: 'https://github.com/oVirt/ovirt-web-ui.git',
+      branch: 'master',
+      folder: '/',
+    },
+```
+
 == Package versioning
 
-When changing the `projects.list` file, bump `.y` in `Version` and reset
-the `Release` number.
+In general, when adding a project or pre-seed source to the `projects.list.mjs` file,
+bump `.y` in `Version` and reset the `Release` number.
 
-When rebuilding the package to reflect changes in the consuming projects
-(the ones listed in the `projects.list` file), or when adding a pre-seed,
-bump `.z` in `Version` and reset the `Release` number.
+When rebuilding the package to pickup changes in the projects listed in the
+`projects.list.mjs` file, bump `.z` in `Version` and reset the `Release` number.
 
-For packaging related changes, simply bump the `Release` number.
+When adding or removing a pre-seed, bump `.z` in `Version` and reset the `Release` number.
 
-== Pre-seed
+Bump the `Release` number for a rebuild with the same project and pre-seed configurations.
 
-If you need dependencies to build a patch or pull request where changes to
-`package.json` or `yarn.lock` are not yet merged, you can add a manual pre-seed.
-The avoids a chicken and egg problem.
+== Pre-seed [[pre-seed]]
+
+If you need dependencies to build a pull request where changes to `package.json` or
+`yarn.lock` are not yet merged, you can add a manual pre-seed based on a GitHub pull
+request.  This avoids a chicken and egg problem.
 
 === Summary
 
-If you need dependencies to exist in ovirt-engine-nodejs-modules, but
-your `package.json` and `yarn.lock` files are not yet committed, you can
-pre-seed ovirt-engine-nodejs-modules with your files to avoid a
-chicken and egg problem.
+Adding a pre-seed is as easy as adding a reference to a pull request with the `package.json`
+and/or `yarn.lock` changes.
 
-Add a subdirectory to this pre-seed directory, and in that subdirectory
-add copies of the `package.json` and `yarn.lock` your new project or patch
-is using.
+The check CI script will only pass if all pre-seeds are linked to an open pull request.
 
-The name of the subdirectory needs to be `<project>_<pr>` or
-`<project>_<changeid>`. The github PR or gerrit ChangeId needs to be
-valid and open. This is verified by `automation/check.sh.`
-
-**NOTE: Pre-seeds for merged or abandoned patches must be removed from pre-seed directory.**
-The check CI script will only pass if all pre-seeds are linked to an open patch or pull
-request.
+**NOTE: Pre-seeds for merged or closed pull-requests patches must be removed.**
 
 === For example
 
-Files needed for pre-seeings a gerrit patch `I42c223e8bc7c9087c29370e6db8524ab21d51c36`:
+To pre-seed from a GitHub pull request `42` against the `oVirt/ovirt-web-ui` project,
+update the `preseeds` section of `projects.list.mjs` to look like:
 
-  - pre-seed/cockpit-ovirt_I42c223e8bc7c9087c29370e6db8524ab21d51c36/package.json
-  - pre-seed/cockpit-ovirt_I42c223e8bc7c9087c29370e6db8524ab21d51c36/yarn.lock
+```js
+    'ovirt-web-ui': {
+      github: {
+        owner: 'oVirt',
+        repo: 'ovirt-web-ui'
+      },
+      folder: '/',
+      pr: [
+        42,
+      ]
+    },
+```
 
+Any number of project and PRs per project can be listed.
 
-Files needs for pre-seeding a GitHub pull request `42`:
-
-  - pre-seed/example-project_42/package.json
-  - pre-seed/example-project_42/yarn.lock
-
-
-After committing a patch that adds a pre-seed, the newly built version
-of ovirt-engine-nodejs-modules will now be pre-seeded with your
-new `package.json` and `yarn.lock` requirements.
+After a pull request adding a pre-seed is merged, the newly built version
+of `ovirt-engine-nodejs-modules` will now be pre-seeded with the new `package.json`
+and `yarn.lock` requirements.  Offline CI builds of the source pre-seed will now
+work.
