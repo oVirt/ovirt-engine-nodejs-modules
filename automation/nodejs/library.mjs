@@ -87,8 +87,8 @@ export async function checkoutAndVerifyRepo(targetDir, name, { git_url, branch, 
   let commitId
   try {
     commitId = await checkoutRepo(targetDir, git_url, branch)
-  } catch (e) {
-    throw new Error(`Problem checking out the repo (${git_url}): ${e}`)
+  } catch (cause) {
+    throw new Error(`Problem checking out the repo (${git_url})`, {cause})
   }
 
   const importantFiles = [
@@ -137,8 +137,8 @@ export async function getCloneUrl (octokit, { owner, repo }) {
   let res
   try {
     res = await octokit.rest.repos.get({ owner, repo })
-  } catch (e) {
-    throw new Error(`Problem accessing the github repo via api: ${e}`)
+  } catch (cause) {
+    throw new Error(`Problem accessing the github repo via api`, {cause})
   }
 
   if (res.status === 200) {
@@ -171,8 +171,8 @@ export async function verifyPullRequestStatus (octokit, { owner, repo, pull_numb
       repo,
       pull_number,
     })
-  } catch (e) {
-    throw new Error(`Problem accessing the github pull request via api: ${e}`)
+  } catch (cause) {
+    throw new Error(`Problem accessing the github pull request via api`, {cause})
   }
 
   if (res.status !== 200) {
