@@ -2,7 +2,9 @@ import path from 'path'
 import simpleGit from 'simple-git'
 import { statSync, rmSync } from 'fs'
 import { copyFile } from 'fs/promises'
+
 import projectsList from '../../projects.list.mjs'
+import preSeedsList from '../../pre-seeds.list.mjs'
 
 export const data = {
   run_date: (d => `${d.getFullYear()}${d.getMonth()<9?'0':''}${d.getMonth()+1}${d.getDate()<10?'0':''}${d.getDate()}`)(new Date()),
@@ -15,7 +17,7 @@ export const paths = {
 
 export const projects = projectsList.projects
 
-export const preseeds = projectsList.preseeds
+export const preseeds = preSeedsList
 
 /**
  * If the `working_root` folder exists, remove it.

@@ -46,7 +46,7 @@ for await (const [name, info] of Object.entries(lib.preseeds)) {
     continue
   }
 
-  // verify each preseed PR listed for the project
+  // verify each pre-seed PR listed for the project
   console.log(`pull requests to process: [ ${info.pr.map(p=>chalk.yellow(p)).join(', ')} ]`)
   for await (const pr of info.pr) {
     const prName = `${name}_pull${pr}`

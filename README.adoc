@@ -19,7 +19,7 @@ It's highly recommended to specify an explicit version and release when
 requiring the `ovirt-engine-nodejs-modules` package in your project.  For
 example, in your `rpm.spec` file:
 
-  BuildRequires: ovirt-engine-nodejs-modules >= 2.1.6-1
+  BuildRequires: ovirt-engine-nodejs-modules >= 2.3.0-1
 
 Note that `ovirt-engine-nodejs-modules` requires `nodejs` and takes care of
 installing the `yarn` package manager.
@@ -65,13 +65,20 @@ the package:
 
 == Package versioning
 
-In general, when adding a project or pre-seed source to the `projects.list.mjs` file,
-bump `.y` in `Version` and reset the `Release` number.
+The project is version is the standard `x.y.z-release` format. In general, only bump the
+`x` number for major project changes.
+
+When adding a project to the `projects.list.mjs` file, bump `.y` in `Version`
+and reset the `Release` number.
 
 When rebuilding the package to pickup changes in the projects listed in the
 `projects.list.mjs` file, bump `.z` in `Version` and reset the `Release` number.
 
-When adding or removing a pre-seed, bump `.z` in `Version` and reset the `Release` number.
+When adding a pre-seed source to the `pre-seeds.list.mjs` file, bump `.y` in `Version`
+and reset the `Release` number.
+
+When adding or removing a specific pull request pre-seed, bump `.z` in `Version` and
+reset the `Release` number.
 
 Bump the `Release` number for a rebuild with the same project and pre-seed configurations.
 
@@ -88,12 +95,12 @@ and/or `yarn.lock` changes.
 
 The check CI script will only pass if all pre-seeds are linked to an open pull request.
 
-**NOTE: Pre-seeds for merged or closed pull-requests patches must be removed.**
+**NOTE: Pre-seeds for merged or closed pull-requests patches must be removed for CI to pass.**
 
 === For example
 
 To pre-seed from a GitHub pull request `42` against the `oVirt/ovirt-web-ui` project,
-update the `preseeds` section of `projects.list.mjs` to look like:
+update the `pre-seeds.list.mjs` file to look like:
 
 ```js
     'ovirt-web-ui': {
