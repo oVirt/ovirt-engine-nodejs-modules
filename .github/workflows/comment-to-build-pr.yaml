@@ -24,11 +24,11 @@ jobs:
       PR_NUMBER: ${{ github.event.issue.number }}
 
     steps:
-      - name: make sure the action and build.sh required packages are installed
+      - name: install action and build.sh required packages, and most current nodejs-modules (as a fetch cache)
         run: |
-          dnf -y config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo
-          dnf -y install gh
-          dnf -y install git jq wget rpmlint rpm-build nodejs ovirt-engine-nodejs-modules
+          dnf -y builddep --spec ovirt-engine-nodejs-modules.spec
+          dnf -y --repofrompath=gh-cli,https://cli.github.com/packages/rpm/gh-cli.repo install gh
+          dnf -y install ovirt-engine-nodejs-modules
 
       - name: checkout the repo
         uses: actions/checkout@v2
@@ -40,6 +40,8 @@ jobs:
           gh pr checkout --repo ${GITHUB_REPOSITORY} ${PR_NUMBER}
 
       - name: build src.rpm
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: ./automation/build.sh copr
 
       - name: install build dependencies from src.rpm
@@ -68,4 +70,17 @@ jobs:
               -q '"[action run summary]("+ .html_url +")"' \
           )
           echo ":heavy_check_mark: Build success! See the results and artifacts at $LINK." \
+            | gh pr comment --repo ${GITHUB_REPOSITORY} -F - ${PR_NUMBER}
+
+      - name: add fail comment with a link to the action's run
+        if: failure()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          LINK=$( \
+            gh api -X GET \
+              repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID} \
+              -q '"[action run summary]("+ .html_url +")"' \
+          )
+          echo ":x: Build failed. See the results at $LINK." \
             | gh pr comment --repo ${GITHUB_REPOSITORY} -F - ${PR_NUMBER}

@@ -1,0 +1,12 @@
+{
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@octokit/rest": "^18.12.0",
+    "chalk": "^5.0.1",
+    "simple-git": "^3.7.0"
+  },
+  "scripts": {
+    "verify-projects": "node verify_projects.mjs",
+    "verify-pre-seeds": "node verify_pre-seeds.mjs"
+  }
+}

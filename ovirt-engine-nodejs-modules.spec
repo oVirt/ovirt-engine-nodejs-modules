@@ -1,6 +1,6 @@
 Name: ovirt-engine-nodejs-modules
-Version: 2.2.3
-Release: 3%{?dist}
+Version: 2.3.0
+Release: 1%{?dist}
 Summary: Node.js modules required to build oVirt JavaScript applications
 Group: Virtualization/Management
 License: Multiple
@@ -44,11 +44,18 @@ install -m 644 projects_files.tar %{dest}
 install -m 755 `find . -maxdepth 1 -name 'yarn-*.js' -exec basename {} \;` %{dest}/bin/yarn
 
 %files
+%license LICENSE
 %license LICENSES
 %license LICENSE-yarn
 %{_datadir}/%{name}
 
 %changelog
+* Fri May 13 2022 Scott J Dickerson <sdickers@redhat.com> - 2.3.0-1
+  - Use git to fetch package.json and yarn.lock for both projects and preseeds
+  - Preseed by referencing a Github PR instead of including package.json and yarn.lock files in the repo
+  - Drop gerrit support
+  - Add project LICENSE (Apache-2.0)
+
 * Thu May 12 2022 Scott J Dickerson <sdickers@redhat.com> - 2.2.3-3
   - Fix COPR srpm builds to be able to use git >=2.32.2
 

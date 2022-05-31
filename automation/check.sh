@@ -14,59 +14,23 @@ if [[ $linterror -ne 0 ]]; then
     exit 6
 fi
 
-# The following loop is taken from "build.sh" - the goal is to validate
-# that all project specific files specified in the "projects.list" file
-# are available for the subsequent RPM build:
-sed -e '/^[ \t]*$/d' -e '/^#/d' projects.list | while read -r line; do
-    echo "Check ${line}"
+# Point to "our" Yarn (and since the js has an initial hashbang, it can run itself)
+export YARN=$(find "${PWD}" -maxdepth 1 -name 'yarn-*.js')
+chmod +x "$YARN"
+yarn () {
+    "$YARN" $*
+}
+export -f yarn
 
-    package_json_url="${line/\{FILE\}/package.json}"
-    yarn_lock_url="${line/\{FILE\}/yarn.lock}"
+# Setup node_modules for automation/nodejs
+pushd ./automation/nodejs; yarn install; popd
 
-    wget -qO "package.json" "${package_json_url}" || exit 1
-    echo "  project name: $(jq '.name' package.json)"
-    rm package.json
-
-    wget -qO "yarn.lock" "${yarn_lock_url}" || exit 2
-    rm yarn.lock
-done
-
-# Check if all pre-seeds are still valid - PR needs to be opened and not merged or abandoned
-Errors=()
-while read -r dname; do
-    echo "Check ${dname}"
-    pr=$(echo ${dname/#pre-seed\/} | cut -d_ -f2)
-    if [[ "${pr:0:1}" =~ ^I ]]; then
-        echo "  gerrit Change-Id: $pr"
-        status=$(wget -qO - "http://gerrit.ovirt.org/changes/?q=${pr}" | sed -E '1d; /^\[|^\]/d' | jq -r .status)
-        if [[ -z "$status" || "$status" = "MERGED" || "$status" = "ABANDONED" ]]; then
-            # echo "  Error: You need to fix ${dname}. Invalid status of ${pr}: ${status}"
-            Errors+=("Please fix ${dname}, invalid status of ${pr}: ${status}")
-        fi
-    elif [[ "${pr:0:1}" =~ ^[0-9] ]]; then
-        echo "  github PR: $pr"
-        ghProject=$(echo ${dname} | cut -d/ -f5)
-        state=$(wget -qO - "https://api.github.com/repos/oVirt/${ghProject}/pulls/${pr}" | jq -r .state)
-
-        if [[ "$ghProject" = "ovirt-web-ui" || "$ghProject" = "ovirt-engine-ui-extensions" ]]; then
-            if [[ ! "$state" = "open" ]]; then
-                # echo "  Error: You need to fix ${dname}. Invalid state of ${pr}: ${state}"
-                Errors+=("Please fix ${dname}, invalid state of ${pr}: ${state}")
-            fi
-        fi
-    else
-        echo "Invalid pre-seed directory ${dname}"
-        exit 4
-    fi
-done < <(
-    find pre-seed -mindepth 1 -maxdepth 1 -type d
-)
-
-if [[ ${#Errors[@]} -gt 0 ]]; then
-    echo ""
-    echo "Some pre-seeds have issues:"
-    for e in "${Errors[@]}"; do
-        echo "  - $e"
-    done
-    exit 3
+# Validate the projects (git repo ok, necessary files can be found) AND the
+# pre-seeds (PR is open and not merged/closed/abandoned)
+./automation/_build-setup-verify.sh || error_verify=$?
+if [[ $error_verify -eq 0 ]]; then
+    echo "Ok!"
+else
+    echo "Fail!!"
+    exit 7
 fi
