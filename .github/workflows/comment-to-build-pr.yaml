@@ -4,8 +4,7 @@ on:
     types: [created]
 
 jobs:
-  build_el8:
-    name: build the rpm repo
+  build:
     if: |
       github.event.issue.pull_request &&
       startsWith(github.event.comment.body, '/build rpm') &&
@@ -16,20 +15,24 @@ jobs:
       )
 
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: el8
+            container-image: quay.io/ovirt/buildcontainer:el8stream
+          - name: el9
+            container-image: quay.io/ovirt/buildcontainer:el9stream
+
+    name: ${{ matrix.name }}, build the rpm repo
     container:
-      image: quay.io/ovirt/buildcontainer:el8stream
+      image: ${{ matrix.container-image }}
 
     env:
       CHECK_VERSION: no
       PR_NUMBER: ${{ github.event.issue.number }}
 
     steps:
-      - name: install action and build.sh required packages, and most current nodejs-modules (as a fetch cache)
-        run: |
-          dnf -y builddep --spec ovirt-engine-nodejs-modules.spec
-          dnf -y --repofrompath=gh-cli,https://cli.github.com/packages/rpm/gh-cli.repo install gh
-          dnf -y install ovirt-engine-nodejs-modules
-
       - name: checkout the repo
         uses: actions/checkout@v2
 
@@ -38,6 +41,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh pr checkout --repo ${GITHUB_REPOSITORY} ${PR_NUMBER}
+
+      - name: install build.sh required packages and most current nodejs-modules (as a fetch cache)
+        run: |
+          dnf -y install ovirt-engine-nodejs-modules
+          dnf -y builddep --spec ovirt-engine-nodejs-modules.spec
 
       - name: build src.rpm
         env:
@@ -69,7 +77,7 @@ jobs:
               repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID} \
               -q '"[action run summary]("+ .html_url +")"' \
           )
-          echo ":heavy_check_mark: Build success! See the results and artifacts at $LINK." \
+          echo ":heavy_check_mark: Build ${{ matrix.name }} success! See the results and artifacts at $LINK." \
             | gh pr comment --repo ${GITHUB_REPOSITORY} -F - ${PR_NUMBER}
 
       - name: add fail comment with a link to the action's run
@@ -82,5 +90,5 @@ jobs:
               repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID} \
               -q '"[action run summary]("+ .html_url +")"' \
           )
-          echo ":x: Build failed. See the results at $LINK." \
+          echo ":x: Build ${{ matrix.name }} failed. See the results at $LINK." \
             | gh pr comment --repo ${GITHUB_REPOSITORY} -F - ${PR_NUMBER}

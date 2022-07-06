@@ -3,12 +3,20 @@ on:
   pull_request:
 
 jobs:
-  test_el8:
-    name: run check.sh to verify content
-
+  test:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: el8
+            container-image: quay.io/ovirt/buildcontainer:el8stream
+          - name: el9
+            container-image: quay.io/ovirt/buildcontainer:el9stream
+
+    name: ${{ matrix.name }}, run check.sh to verify content
     container:
-      image: quay.io/ovirt/buildcontainer:el8stream
+      image: ${{ matrix.container-image }}
 
     env:
       # The check version script needs to know the PR base and head commits to be able to
