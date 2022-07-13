@@ -1,5 +1,5 @@
 Name: ovirt-engine-nodejs-modules
-Version: 2.3.4
+Version: 2.3.5
 Release: 1%{?dist}
 Summary: Node.js modules required to build oVirt JavaScript applications
 Group: Virtualization/Management
@@ -50,6 +50,10 @@ install -m 755 `find . -maxdepth 1 -name 'yarn-*.js' -exec basename {} \;` %{des
 %{_datadir}/%{name}
 
 %changelog
+* Tue Jul 12 2022 Scott J Dickerson <sdickers@redhat.com> - 2.3.5-1
+  - add preseed for https://github.com/oVirt/ovirt-engine-ui-extensions/pull/70
+  - remove stale preseeds
+
 * Fri Jul 8 2022 Scott J Dickerson <sdickers@redhat.com> - 2.3.4-1
   - add preseed for https://github.com/oVirt/ovirt-engine-ui-extensions/pull/69
 
