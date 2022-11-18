@@ -16,7 +16,7 @@ export default {
     folder: '/',
     pr: [
       73,
-      81,
+      83,
     ]
   },
 
