@@ -16,7 +16,6 @@ export default {
     folder: '/',
     pr: [
       73,
-      84,
     ]
   },
 
@@ -27,6 +26,7 @@ export default {
     },
     folder: '/',
     pr: [
+      1638,
     ]
   },
 
