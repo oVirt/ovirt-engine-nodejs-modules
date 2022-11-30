@@ -34,7 +34,7 @@ jobs:
 
     steps:
       - name: checkout the repo
-        uses: actions/checkout@v2
+        uses: ovirt/checkout-action@main
 
       - name: checkout the PR
         env:
@@ -63,7 +63,7 @@ jobs:
             --rebuild exported-artifacts/ovirt-engine-nodejs-modules*.src.rpm
 
       - name: upload artifacts
-        uses: ovirt/upload-rpms-action@v2
+        uses: ovirt/upload-rpms-action@main
         with:
           directory: exported-artifacts/
 

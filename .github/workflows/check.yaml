@@ -30,12 +30,10 @@ jobs:
         run: |
           dnf -y install git jq wget rpmlint
 
-      # https://github.com/actions/checkout#checkout-pull-request-head-commit-instead-of-merge-commit
       - name: checkout sources (PR head, not the PR merge)
-        uses: actions/checkout@v2
+        uses: ovirt/checkout-action@main
         with:
           fetch-depth: 20
-          ref: ${{ github.event.pull_request.head.sha }}
 
       - name: run automation/check.sh
         env:
