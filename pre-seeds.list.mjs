@@ -25,6 +25,7 @@ export default {
     },
     folder: '/',
     pr: [
+      1641,
     ]
   },
 
