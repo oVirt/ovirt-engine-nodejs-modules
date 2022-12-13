@@ -36,6 +36,7 @@ export default {
     },
     folder: '/dashboard',
     pr: [
+      35,
     ]
   },
 }
