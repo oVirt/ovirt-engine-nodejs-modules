@@ -15,6 +15,7 @@ export default {
     },
     folder: '/',
     pr: [
+      87,
     ]
   },
 
@@ -25,7 +26,6 @@ export default {
     },
     folder: '/',
     pr: [
-      1643,
     ]
   },
 
@@ -36,7 +36,6 @@ export default {
     },
     folder: '/dashboard',
     pr: [
-      35,
     ]
   },
 }
