@@ -19,14 +19,14 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: el8
-            container-image: quay.io/ovirt/buildcontainer:el8stream
           - name: el9
-            container-image: quay.io/ovirt/buildcontainer:el9stream
+            container-image: el9stream
+          - name: el10
+            container-image: el10stream
 
     name: ${{ matrix.name }}, build the rpm repo
     container:
-      image: ${{ matrix.container-image }}
+      image: quay.io/ovirt/buildcontainer:${{ matrix.container-image }}
 
     env:
       CHECK_VERSION: no
@@ -40,6 +40,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
           gh pr checkout --repo ${GITHUB_REPOSITORY} ${PR_NUMBER}
 
       - name: install build.sh required packages and most current nodejs-modules (as a fetch cache)
