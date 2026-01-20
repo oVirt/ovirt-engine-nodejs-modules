@@ -1,5 +1,5 @@
 Name: ovirt-engine-nodejs-modules
-Version: 2.3.21
+Version: 2.3.22
 Release: 1%{?dist}
 Summary: Node.js modules required to build oVirt JavaScript applications
 Group: Virtualization/Management
@@ -49,6 +49,9 @@ install -m 755 `find . -maxdepth 1 -name 'yarn-*.js' -exec basename {} \;` %{des
 %{_datadir}/%{name}
 
 %changelog
+* Tue Jan 20 2026 Jasper Berton <jasper.berton@team.blue> - 2.3.22-1
+  - add preseed for https://github.com/oVirt/ovirt-web-ui/pull/1665
+
 * Thu Oct 16 2025 Jean-Louis Dupond <jean-louis@dupond.be> - 2.3.21-1
   - removed rpmlint from build dependencies due to it only being used in CI.
   - removed stale preseeds.
