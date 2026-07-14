@@ -97,19 +97,13 @@ tar cf sources.tar \
 rm -rf rpmbuild/ && mkdir -p rpmbuild/{SPECS,RPMS,SRPMS,SOURCES}
 mv sources.tar yarn-offline-cache.tar rpmbuild/SOURCES
 
-if [[ "${1:-foo}" == "copr" ]] ; then
-    # Build the source package:
-    rpmbuild \
-        -bs \
-        --define="_topdir ${PWD}/rpmbuild" \
-        "ovirt-engine-nodejs-modules.spec"
-else
-    # Build the source and binary packages:
-    rpmbuild \
-        -ba \
-        --define="_topdir ${PWD}/rpmbuild" \
-        "ovirt-engine-nodejs-modules.spec"
-fi
+# Build the source and binary packages:
+rpmbuild \
+    -ba \
+    --define="_topdir ${PWD}/rpmbuild" \
+    --define "PACKAGE_RPM_RELEASE ${PACKAGE_RPM_RELEASE:-0.master}" \
+    --define "release_suffix ${RELEASE_SUFFIX:-}" \
+    "ovirt-engine-nodejs-modules.spec"
 
 # Make sure the artifacts directory is empty:
 artifacts_dir="${PWD}/exported-artifacts"

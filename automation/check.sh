@@ -1,8 +1,5 @@
 #!/bin/bash -e
 
-# Make sure we remember to update the version and/or release:
-./automation/check-version-release.sh
-
 # Make sure we only have 1 instance of yarn
 [[ $(ls -1 yarn-*.js | wc -l) -ne 1 ]] && { echo "Error: multiple yarn binaries present"; exit 5; }
 
