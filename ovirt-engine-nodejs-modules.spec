@@ -1,6 +1,6 @@
 Name: ovirt-engine-nodejs-modules
 Version: 2.3.23
-Release: 1%{?dist}
+Release: %{?PACKAGE_RPM_RELEASE:0.master}%{?release_suffix}%{?dist}
 Summary: Node.js modules required to build oVirt JavaScript applications
 Group: Virtualization/Management
 License: Multiple
